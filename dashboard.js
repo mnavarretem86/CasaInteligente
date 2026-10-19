@@ -164,7 +164,7 @@ const HomeDashboard = (() => {
 
   function init() {
     const note = document.querySelector('.sidebar-note');
-    if (note) note.innerHTML = '<b>📡 Smart Home UDEM</b><p>Supervisión y control de dispositivos conectados.</p>';
+    if (note) note.innerHTML = '<b>📡 Smart Home UDEM</b>';
   }
 
   return { onData, onError, init };

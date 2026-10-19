@@ -165,10 +165,11 @@
     openLoadingNotice();
 
     try {
-      await checkEsp32(ip);
+      const initialStatus = await checkEsp32(ip);
       // Se guarda la IP únicamente DESPUÉS de comprobar el endpoint real.
       if (window.SmartHome && typeof SmartHome.saveIp === 'function') {
         SmartHome.saveIp(ip);
+        if (typeof SmartHome.rememberStatus === 'function') SmartHome.rememberStatus(initialStatus, ip);
       } else {
         localStorage.setItem(STORAGE_KEY, ip);
       }

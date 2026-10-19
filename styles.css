@@ -99,3 +99,90 @@ footer.page-footer{font-size:11px;color:#a1b4c4;margin-top:25px;text-align:cente
 @media(max-width:820px){.app-shell{display:block}.sidebar{height:auto;position:relative;padding:12px 16px;gap:10px;border-right:0;border-bottom:1px solid #dae9f3}.brand{padding:0}.brand-icon{width:36px;height:36px;font-size:20px;border-radius:12px}.brand-name{font-size:17px}.brand-sub{font-size:9px}.nav-caption,.sidebar-note{display:none}.menu{flex-direction:row;overflow-x:auto;gap:4px;padding:0 0 3px}.menu-link{padding:9px 12px}.menu-link.active{box-shadow:inset 0 -3px #4397ee}.content{padding:19px 15px 34px}.splash{grid-template-columns:1fr;gap:28px;max-width:610px}.splash h1{margin-top:18px}.splash-stats{margin-top:18px}}
 @media(max-width:570px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}.hero{padding:24px}.hero-emoji{display:none}.card{padding:20px}.ip-control input{width:115px}.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}.weather-hero{min-height:300px}.weather-hero .weather-symbol{right:15px;top:10px;font-size:70px;opacity:.43}.calibration-grid{grid-template-columns:1fr}.splash{padding:24px}.splash-panel{padding:26px}.splash-panel:before{font-size:64px;top:-35px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Ajustes de navegación, accesibilidad y pantallas táctiles */
+html,body{max-width:100%;}
+.app-shell,.content,#page-content{min-width:0;max-width:100%;}
+.menu-link{min-height:44px;}
+button,.btn,[data-cmd]{touch-action:manipulation;}
+button:focus-visible,.btn:focus-visible,.menu-link:focus-visible{outline:3px solid #65a6f1;outline-offset:3px;}
+.connection-pill{white-space:nowrap;}
+.ip-control button{min-height:35px;}
+button:disabled{filter:saturate(.7);}
+@media (max-width:820px){
+  .sidebar{position:sticky;top:0;z-index:110;padding:10px 14px 8px;gap:10px;background:rgba(251,254,255,.96);box-shadow:0 6px 25px rgba(36,97,153,.08);}
+  .sidebar nav{min-width:0;max-width:100%;position:relative;}
+  .menu{display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:smooth;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding:14px;padding:4px 2px 8px;}
+  .menu::-webkit-scrollbar{display:none;}
+  .menu-link{flex:0 0 auto;scroll-snap-align:center;min-height:43px;padding:10px 14px;border-radius:12px;}
+  .menu-link.active{box-shadow:inset 0 -3px #4397ee,0 3px 10px rgba(40,105,185,.09);}
+  .topbar{align-items:flex-start;gap:8px;margin-bottom:20px;}
+  .connection-tools{width:100%;justify-content:space-between;gap:8px;}
+  .content{padding:20px 15px 34px;}
+  #page-content>*{max-width:100%;}
+}
+@media(max-width:570px){
+  .brand-icon{width:34px;height:34px;}
+  .brand-name{font-size:17px;}
+  .brand-sub{font-size:9px;letter-spacing:.9px;}
+  .breadcrumb{line-height:1.5;font-size:10px;}
+  .topbar{margin-bottom:18px;}
+  .connection-tools{display:flex;align-items:center;gap:7px;}
+  .connection-pill{font-size:10px;min-height:35px;padding:7px 9px;flex:0 1 auto;}
+  .ip-control{flex:1 1 210px;max-width:100%;min-width:0;justify-content:flex-end;padding:4px 5px;}
+  .ip-control label{font-size:10px!important;}
+  .ip-control input{flex:1 1 auto;max-width:135px;min-width:70px;width:auto;padding:4px 2px;font-size:11px;}
+  .ip-control button{flex:0 0 auto;min-height:37px;padding:8px 9px;font-size:10px;}
+  .grid{gap:13px;}
+  .card{padding:18px;border-radius:18px;}
+  .card-heading{flex-wrap:wrap;gap:10px;}
+  .actions{gap:9px;}
+  .actions .btn{min-height:44px;}
+  .hero{border-radius:20px;}
+  .page-heading{margin-bottom:18px;}
+  .page-heading h1{overflow-wrap:anywhere;}
+  .page-footer{padding-bottom:env(safe-area-inset-bottom,0px);}
+  .toast-notice{bottom:calc(12px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:none;}
+}
+@media(max-width:350px){
+  .content{padding-inline:11px;}
+  .sidebar{padding-inline:10px;}
+  .connection-tools{align-items:stretch;flex-direction:column;}
+  .ip-control{flex-basis:auto;width:100%;justify-content:space-between;}
+  .ip-control input{max-width:none;}
+}
+@media(hover:none){.menu-link:hover{transform:none;}}
+
+
+/* Menú hamburguesa móvil */
+.menu-toggle,.sidebar-close{display:none;border:0;background:#eaf5ff;color:#2166a4;cursor:pointer;font:800 20px/1 'Outfit',sans-serif;border-radius:14px;box-shadow:0 6px 16px rgba(53,116,177,.14)}
+.menu-toggle{width:44px;height:44px;align-items:center;justify-content:center;flex:0 0 44px}
+.sidebar-close{width:40px;height:40px;align-items:center;justify-content:center;flex:0 0 40px}
+.topbar-head{display:flex;align-items:center;gap:12px;min-width:0}
+.mobile-overlay{display:none}
+.sidebar-top{display:block}
+@media (max-width:820px){
+  body.menu-open{overflow:hidden;}
+  .mobile-overlay{display:block;position:fixed;inset:0;background:rgba(9,24,39,.42);backdrop-filter:blur(2px);z-index:119;}
+  .mobile-overlay[hidden]{display:none;}
+  .menu-toggle,.sidebar-close{display:inline-flex;}
+  .topbar{align-items:flex-start;}
+  .topbar-head{width:100%;margin-bottom:8px;}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:min(86vw,320px);height:100vh;overflow:auto;z-index:120;padding:18px 16px 20px;border-right:1px solid #dae9f3;border-bottom:0;box-shadow:18px 0 40px rgba(18,54,88,.22);transform:translateX(-105%);transition:transform .28s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .sidebar .brand{padding:0;min-width:0;}
+  .sidebar nav{width:100%;}
+  .menu{display:flex;flex-direction:column;overflow:visible;gap:6px;padding:0;scroll-snap-type:none;}
+  .menu-link{width:100%;justify-content:flex-start;}
+  .menu-link.active{box-shadow:0 8px 18px rgba(67,151,238,.16), inset 4px 0 #4397ee;}
+  .content{padding-top:16px;}
+}
+@media (min-width:821px){
+  .topbar-head{display:block;}
+}
+@media (max-width:570px){
+  .menu-toggle{width:42px;height:42px;border-radius:13px;}
+  .sidebar{width:min(88vw,300px);padding:16px 14px 18px;}
+  .topbar-head .breadcrumb{font-size:10px;}
+}

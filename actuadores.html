@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f0f8ff">
+  <title>Actuadores | Smart Home UDEM</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .act-page{--act-ink:#16395a;--act-muted:#66839e;color:var(--act-ink)}
+    .act-page *{box-sizing:border-box}
+    .act-intro{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:24px}
+    .act-eyebrow{margin:0 0 8px;color:#2685c7;letter-spacing:2.2px;font-size:11px;font-weight:900;text-transform:uppercase}
+    .act-intro h1{margin:0 0 9px;font-size:clamp(34px,4.4vw,56px);letter-spacing:-2px;line-height:1.06}
+    .act-intro p{font-size:14px;color:var(--act-muted);margin:0;max-width:640px}
+    .act-online{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border:1px solid #d7e6f2;border-radius:16px;white-space:nowrap;box-shadow:0 9px 22px #4a8ab112;font-size:12px;font-weight:800;color:#3d789a}
+    .act-online .dot{width:10px;height:10px;border-radius:50%;background:#a0b6c6}
+    .act-online.online .dot{background:#18b487;box-shadow:0 0 0 5px #18b4871d}
+    .act-online.offline .dot{background:#f18a70}
+    .act-hero{position:relative;overflow:hidden;border-radius:29px;padding:clamp(24px,3.6vw,43px);min-height:218px;margin-bottom:24px;background:linear-gradient(110deg,#1967b8 0%,#318fd3 51%,#54c3c2 100%);color:#fff;box-shadow:0 24px 45px rgba(35,111,171,.20)}
+    .act-hero:before,.act-hero:after{content:"";position:absolute;border-radius:50%;border:1px solid #ffffff38;pointer-events:none}
+    .act-hero:before{width:300px;height:300px;right:4%;top:-210px;box-shadow:0 0 0 70px #ffffff09,0 0 0 145px #ffffff08;animation:act-breathe 7s ease-in-out infinite alternate}
+    .act-hero:after{width:450px;height:450px;right:-185px;bottom:-410px;box-shadow:0 0 0 60px #ffffff09}
+    .act-hero-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .act-hero .act-eyebrow{color:#d8f7ff}
+    .act-hero h2{font-size:clamp(25px,3.4vw,39px);line-height:1.12;letter-spacing:-1px;margin:0 0 12px}
+    .act-hero p{font-size:14px;max-width:610px;margin:0;color:#e5f6ff}
+    .act-summary{min-width:170px;text-align:center;border-radius:21px;padding:18px 24px;background:#ffffff23;border:1px solid #ffffff48;backdrop-filter:blur(8px)}
+    .act-summary strong{display:block;font-size:clamp(43px,5vw,68px);line-height:1.05;letter-spacing:-3px;font-family:'Outfit',sans-serif}
+    .act-summary span{font-size:11px;letter-spacing:1.3px;font-weight:900;text-transform:uppercase}
+    .act-device-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:stretch}
+    .act-device{min-width:0;background:#fff;border:1px solid #dcebf5;border-radius:25px;padding:clamp(20px,2.5vw,29px);box-shadow:0 15px 35px #3c84ad12;transition:transform .25s,box-shadow .25s}
+    .act-device:hover{transform:translateY(-3px);box-shadow:0 22px 42px #3c84ad20}
+    .act-device-head{display:flex;justify-content:space-between;align-items:start;gap:12px}
+    .act-device-head h3{font-size:23px;letter-spacing:-.6px;margin:3px 0 5px}
+    .act-device-head p{font-size:12px;color:var(--act-muted);margin:0}
+    .act-kicker{font-weight:900;font-size:10px;letter-spacing:1.5px;color:#6394b4;text-transform:uppercase}
+    .act-state{display:inline-flex;align-items:center;justify-content:center;padding:9px 13px;border-radius:999px;font-size:11px;font-weight:900;background:#eff5fa;color:#657f93;white-space:nowrap}
+    .act-state.good{background:#e2f9f0;color:#128166}.act-state.warn{background:#fff1d8;color:#a36718}.act-state.info{background:#e5f2ff;color:#246ec4}
+    .act-stage{height:230px;margin:20px 0;position:relative;overflow:hidden;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,#f4faff,#e8f4ff)}
+    .act-stage:after{content:"";position:absolute;left:10%;right:10%;bottom:16px;height:1px;background:#a2c7df44}
+    .act-lamp-stage{background:radial-gradient(circle at 50% 8%,#fff8e5,#f3f9ff 67%)}
+    .act-lamp-wire{position:absolute;top:0;left:50%;width:3px;height:61px;background:#87a6ba}
+    .act-lamp-shade{position:absolute;top:57px;left:50%;transform:translateX(-50%);width:116px;height:68px;background:linear-gradient(145deg,#718db2,#2e618e);clip-path:polygon(33% 0,67% 0,100% 100%,0 100%);z-index:4;filter:drop-shadow(0 7px 7px #3c739633)}
+    .act-lamp-bulb{position:absolute;top:113px;left:50%;transform:translateX(-50%);width:56px;height:52px;border-radius:12px 12px 35px 35px;background:#b7c6d2;transition:background .55s,box-shadow .55s;z-index:3}
+    .act-lamp-beam{position:absolute;top:121px;left:50%;transform:translateX(-50%);width:260px;height:195px;clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);background:linear-gradient(to bottom,#ffd47b7a,#ffecc300);opacity:0;transition:opacity .6s;filter:blur(5px)}
+    .act-lamp-stage.is-on .act-lamp-bulb{background:#ffda72;box-shadow:0 0 30px #f9c54dcc,0 0 78px #f3bd6030}
+    .act-lamp-stage.is-on .act-lamp-beam{opacity:1;animation:act-glow 4s ease-in-out infinite alternate}
+    .act-lamp-floor{position:absolute;bottom:28px;width:210px;height:22px;border-radius:50%;background:#b9cadc55;filter:blur(9px)}
+    .act-lamp-stage.is-on .act-lamp-floor{background:#ffe6a0a6}
+    .act-window-stage{background:radial-gradient(circle at 52% 58%,#dbf8ff,#cbe9fa 80%)}
+    .act-window-sky{position:absolute;width:195px;height:130px;top:22px;border-radius:8px;background:linear-gradient(#8dc9f7,#d8f4fc);overflow:hidden;box-shadow:0 0 0 12px #d6e0e9,0 0 0 18px #7da5c5}
+    .act-window-sun{position:absolute;top:17px;right:24px;width:45px;height:45px;border-radius:50%;background:#ffe596;box-shadow:0 0 30px #ffe19f;animation:act-breathe 4s ease-in-out infinite alternate}
+    .act-window-hill{position:absolute;bottom:-34px;left:-15px;width:230px;height:100px;background:#76bca6;border-radius:60% 50% 0 0}
+    .act-window-cross{position:absolute;inset:0;pointer-events:none;z-index:5}
+    .act-window-cross:before{content:"";position:absolute;width:11px;top:0;bottom:0;left:calc(50% - 5px);background:#fff;box-shadow:0 0 0 2px #7ba9c3}
+    .act-window-cross:after{content:"";position:absolute;height:10px;left:0;right:0;top:46%;background:#fff;box-shadow:0 0 0 2px #7ba9c3}
+    .act-window-sash{position:absolute;inset:0;border:9px solid #f7fdff;background:#ffffff5a;box-shadow:inset 0 0 0 2px #8db9d0,2px 0 9px #37688725;transform-origin:left center;transition:transform .85s cubic-bezier(.2,.8,.2,1),background .5s;z-index:6}
+    .act-window-sash:before{content:"";position:absolute;width:8px;height:27px;right:7px;top:calc(50% - 13px);background:#7ca0b9;border-radius:5px}
+    .act-window-stage.is-open .act-window-sash{transform:perspective(680px) rotateY(-69deg);background:#ffffff24}
+    .act-window-caption{position:absolute;bottom:16px;font-size:12px;font-weight:800;color:#577e9e}
+    .act-fan-stage{height:257px;background:radial-gradient(circle at center,#e2f7fa,#f2f7ff 70%)}
+    .act-fan-sweep{position:absolute;width:210px;height:210px;border:1px dashed #8fc9de;border-radius:50%;box-shadow:0 0 0 20px #5aafd509,0 0 0 38px #5aafd509}
+    .act-rotor{position:relative;width:180px;height:180px;z-index:2;transform-origin:center center}
+    .act-blade{position:absolute;top:17px;left:70px;width:43px;height:82px;border-radius:55% 60% 18% 70%;background:linear-gradient(150deg,#52c5df,#2e7dc0);transform-origin:21px 73px;box-shadow:0 6px 8px #277aa32b}
+    .act-blade:nth-child(2){transform:rotate(120deg)}.act-blade:nth-child(3){transform:rotate(240deg)}
+    .act-fan-center{position:absolute;top:74px;left:74px;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#a2e2f0 60%,#278aba);border:5px solid #dff8ff;box-shadow:0 3px 9px #267eaa48}
+    .act-fan-stage.spinning .act-rotor{animation:act-fan-rotate .62s linear infinite}
+    .act-fan-stage.spinning.reverse .act-rotor{animation-direction:reverse}
+    .act-fan-caption{position:absolute;bottom:15px;color:#5185a4;font-size:12px;font-weight:800}
+    .act-controls{display:flex;gap:9px;flex-wrap:wrap}
+    .act-controls .btn{flex:1;min-height:48px;border-radius:13px;font-size:13px;min-width:115px;transition:filter .2s,transform .2s,box-shadow .2s}
+    .act-controls .btn:hover{transform:translateY(-2px)}
+    .act-controls .is-selected{box-shadow:0 0 0 3px #70bdff4d,0 8px 20px #297abb2c}
+    .act-detail{margin:15px 0 0;font-size:12px;color:var(--act-muted);line-height:1.6}
+    .act-fan-card{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.85fr);gap:28px;align-items:center}
+    .act-fan-card .act-stage{margin:0}
+    .act-fan-card .act-controls{margin-top:20px}
+    .act-note{margin-top:22px;border:1px solid #d6eaf6;background:#f1f9ff;border-radius:18px;padding:16px 20px;display:flex;gap:12px;align-items:center;color:#4f7a98;font-size:12px;line-height:1.6}
+    .act-note strong{color:#27689a}
+    .act-note-icon{font-size:23px}
+    @keyframes act-fan-rotate{to{transform:rotate(360deg)}}
+    @keyframes act-breathe{from{transform:scale(.96)}to{transform:scale(1.04)}}
+    @keyframes act-glow{from{opacity:.73}to{opacity:1}}
+    @media(max-width:1050px){.act-device-grid{grid-template-columns:1fr}.act-fan-card{grid-column:auto;grid-template-columns:1fr}.act-fan-card .act-stage{order:1}.act-fan-card .act-fan-info{order:0}}
+    @media(max-width:700px){.act-intro{align-items:start;flex-direction:column}.act-online{white-space:normal}.act-hero{min-height:0}.act-hero-inner{align-items:stretch}.act-summary{min-width:0;display:flex;align-items:center;gap:15px;text-align:left}.act-summary strong{font-size:44px}.act-controls .btn{min-width:0}.act-stage{height:210px}.act-fan-stage{height:230px}}
+    @media(prefers-reduced-motion:reduce){.act-page *, .act-page *:before,.act-page *:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="site-shell"></div>
+  <template id="page-template">
+    <div class="act-page">
+      <header class="act-intro">
+        <div>
+          <p class="act-eyebrow">Control central · Smart Home</p>
+          <h1>Actuadores <span aria-hidden="true">⚙️</span></h1>
+          <p>Gestiona la iluminación, la ventana y la ventilación de tu espacio.</p>
+        </div>
+        <div class="act-online" id="act-link" role="status" aria-live="polite"><span class="dot"></span><span id="act-link-label">Conectando con ESP32…</span></div>
+      </header>
+
+      <section class="act-hero" aria-label="Resumen de dispositivos">
+        <div class="act-hero-inner">
+          <div>
+            <p class="act-eyebrow">Tu hogar, bajo control</p>
+            <h2 id="act-hero-title">Todo conectado en un solo lugar</h2>
+            <p id="act-hero-subtitle">Consulta los estados y controla tus dispositivos desde este panel.</p>
+          </div>
+          <div class="act-summary"><strong id="act-count">—</strong><span>Dispositivos en uso</span></div>
+        </div>
+      </section>
+
+      <main class="act-device-grid">
+        <article class="act-device">
+          <div class="act-device-head">
+            <div><span class="act-kicker">Iluminación</span><h3>💡 Luz interna</h3><p>Iluminación principal</p></div>
+            <span id="act-led" class="act-state" role="status">Consultando…</span>
+          </div>
+          <div class="act-stage act-lamp-stage" id="act-lamp-stage" aria-hidden="true">
+            <div class="act-lamp-wire"></div><div class="act-lamp-shade"></div><div class="act-lamp-bulb"></div><div class="act-lamp-beam"></div><div class="act-lamp-floor"></div>
+          </div>
+          <div class="act-controls">
+            <button type="button" data-cmd="led_on" class="btn btn-primary" id="act-led-on">☀️ Encender</button>
+            <button type="button" data-cmd="led_off" class="btn btn-outline" id="act-led-off">Apagar</button>
+          </div>
+          <p class="act-detail">Control directo de la luz interna del ESP32.</p>
+        </article>
+
+        <article class="act-device">
+          <div class="act-device-head">
+            <div><span class="act-kicker">Automatización</span><h3>🪟 Ventana</h3><p>Servomotor · GPIO 13</p></div>
+            <span id="act-window" class="act-state" role="status">Consultando…</span>
+          </div>
+          <div class="act-stage act-window-stage" id="act-window-stage" aria-hidden="true">
+            <div class="act-window-sky"><div class="act-window-sun"></div><div class="act-window-hill"></div><div class="act-window-cross"></div><div class="act-window-sash"></div></div>
+            <div class="act-window-caption" id="act-window-caption">Estado de ventana</div>
+          </div>
+          <div class="act-controls">
+            <button type="button" data-cmd="win_open" class="btn btn-green" id="act-window-open">↗ Abrir</button>
+            <button type="button" data-cmd="win_close" class="btn btn-outline" id="act-window-close">Cerrar</button>
+          </div>
+          <p class="act-detail" id="act-window-note">La ventana puede cambiar de posición automáticamente según la configuración de lluvia.</p>
+        </article>
+
+        <article class="act-device act-fan-card">
+          <div class="act-fan-info">
+            <div class="act-device-head">
+              <div><span class="act-kicker">Circulación de aire</span><h3>🌀 Ventilador</h3><p>Dirección de giro y parada</p></div>
+              <span id="act-fan" class="act-state" role="status">Consultando…</span>
+            </div>
+            <p class="act-detail" id="act-fan-desc">Selecciona un sentido de giro o detén el ventilador.</p>
+            <div class="act-controls">
+              <button type="button" data-cmd="fan_izq" class="btn btn-soft" id="act-fan-left">↶ Izquierda</button>
+              <button type="button" data-cmd="fan_der" class="btn btn-primary" id="act-fan-right">↷ Derecha</button>
+              <button type="button" data-cmd="fan_off" class="btn btn-outline" id="act-fan-off">■ Detener</button>
+            </div>
+          </div>
+          <div class="act-stage act-fan-stage" id="act-fan-stage" aria-hidden="true">
+            <div class="act-fan-sweep"></div>
+            <div class="act-rotor"><span class="act-blade"></span><span class="act-blade"></span><span class="act-blade"></span><span class="act-fan-center"></span></div>
+            <div class="act-fan-caption" id="act-fan-caption">Ventilador detenido</div>
+          </div>
+        </article>
+      </main>
+
+      <div class="act-note"><span class="act-note-icon" aria-hidden="true">ℹ️</span><div><strong>Estados informados por el ESP32.</strong> Los gráficos representan las órdenes y estados del controlador; no sustituyen una confirmación física del movimiento.</div></div>
+    </div>
+  </template>
+  <script src="app.js"></script>
+  <script src="actuadores.js"></script>
+</body>
+</html>

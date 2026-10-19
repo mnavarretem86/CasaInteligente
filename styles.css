@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+:root {
+  --ink:#183451; --muted:#627c95; --line:#dbe9f3; --blue:#2473df;
+  --blue-deep:#185bb7; --mint:#129b84; --panel:rgba(255,255,255,.91);
+  --shadow:0 12px 38px rgba(38,102,151,.09);
+}
+*{box-sizing:border-box}
+html{min-height:100%;scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;background:radial-gradient(ellipse at 6% 3%,#d8f4f8 0,transparent 36%),radial-gradient(ellipse at 98% 0%,#e2ebff 0,transparent 38%),linear-gradient(155deg,#f5fafc,#edf7ff 55%,#f9fbff)}
+a{color:inherit;text-decoration:none} button,input{font:inherit}
+button{cursor:pointer}button:disabled{opacity:.62;cursor:wait}
+:focus-visible{outline:3px solid #77baf6;outline-offset:3px}
+.app-shell{max-width:1640px;min-height:100vh;margin:auto;display:grid;grid-template-columns:244px minmax(0,1fr)}
+.sidebar{padding:29px 16px;position:sticky;top:0;height:100vh;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);border-right:1px solid #dbeaf4;z-index:80;display:flex;flex-direction:column;gap:27px}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 10px}
+.brand-icon{background:linear-gradient(145deg,#40bbdf,#387fe3);color:#fff;border-radius:17px;font-size:24px;width:49px;height:49px;display:grid;place-items:center;box-shadow:0 8px 18px #56b5e34a}
+.brand-name{font:800 22px 'Outfit',system-ui,sans-serif;letter-spacing:-.7px}
+.brand-sub{font-size:10px;font-weight:800;color:#6e9eb8;letter-spacing:1.5px}
+.nav-caption{font-size:10px;font-weight:800;color:#9bb0be;letter-spacing:1.4px;margin:0 14px 8px}
+.menu{display:flex;flex-direction:column;gap:5px;overflow:auto}
+.menu-link{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:13px;font-size:13px;font-weight:700;color:#698299;white-space:nowrap;transition:.2s}
+.menu-link:hover{background:#eaf4fc;color:var(--blue)}
+.menu-link.active{color:#2268c5;background:#e2f1ff;box-shadow:inset 3px 0 #4397ee}
+.menu-icon{font-size:17px;display:inline-grid;place-items:center;width:26px;flex-shrink:0}
+.sidebar-note{margin-top:auto;border-radius:17px;padding:16px;background:linear-gradient(130deg,#e4f9ef,#e6f5ff);border:1px solid #d3ebed}
+.sidebar-note b{font-size:13px}.sidebar-note p{font-size:11px;line-height:1.6;color:var(--muted);margin:6px 0 0}
+.content{min-width:0;padding:28px clamp(16px,3vw,44px) 44px;position:relative;z-index:2}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:29px}
+.breadcrumb{font-size:12px;font-weight:800;letter-spacing:.3px;color:#6d94aa}
+.breadcrumb strong{color:#2a6fd0}
+.connection-tools{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.connection-pill{border:1px solid #e6caa6;background:#fff7e8;border-radius:100px;padding:9px 12px;color:#a1783f;font-size:11px;font-weight:800;display:flex;align-items:center;gap:7px}
+.connection-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(53,135,189,.12)}
+.connection-pill.online{color:#127b61;background:#e9faf0;border-color:#c0ebd4}
+.connection-pill.offline{color:#be5e54;background:#fff0ed;border-color:#f5d3ca}
+.ip-control{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:6px;box-shadow:0 2px 12px #cedcea40}
+.ip-control input{width:134px;max-width:42vw;border:0;outline:0;padding:4px 6px;font-size:12px;color:var(--ink);background:transparent}
+.ip-control button{padding:8px 11px;background:#e7f2fd;border:0;color:#236fcc;border-radius:9px;font-size:11px;font-weight:800}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:10px;font-weight:800;color:#3985ce;margin:0 0 9px}
+h1,h2,h3,h4{font-family:'Outfit','DM Sans',sans-serif;margin-top:0}
+h1{font-size:clamp(30px,4.2vw,46px);line-height:1.08;letter-spacing:-1.6px;margin:0 0 11px}
+h2{font-size:24px;letter-spacing:-.6px}h3{font-size:18px;letter-spacing:-.3px}
+p{line-height:1.65}.lead{max-width:730px;color:var(--muted);font-size:14px;margin:0 0 25px}
+.page-heading{margin-bottom:24px}.page-heading .lead{margin-bottom:0}
+.hero{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(110deg,#2477c6,#52abd9 60%,#7fcfcf);color:#fff;padding:29px;box-shadow:0 18px 38px #3e91cd32;margin-bottom:24px}
+.hero:after{content:'';position:absolute;width:360px;height:360px;border-radius:50%;background:#ffffff14;right:-80px;top:-185px;pointer-events:none}
+.hero h2{font-size:clamp(24px,3vw,34px);margin:0 0 7px}.hero p{max-width:660px;font-size:13px;color:#e8f7ff;margin:0}
+.hero-emoji{position:absolute;right:39px;top:22px;font-size:88px;opacity:.88;filter:drop-shadow(0 6px 12px #276f8539)}
+.card{background:var(--panel);border:1px solid rgba(210,229,240,.88);box-shadow:var(--shadow);padding:24px;border-radius:21px;min-width:0}
+.card-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.card-heading h3{font-size:17px;margin:0}.card p{color:var(--muted);font-size:13px}
+.grid{display:grid;gap:18px}.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat-label{color:#7790a5;font-size:12px;font-weight:800;margin:0 0 8px}.stat-value{font:800 clamp(29px,3.4vw,43px) 'Outfit',sans-serif;letter-spacing:-1px;line-height:1.1;margin:0 0 4px;color:#1b587f}
+.stat-sub{font-size:12px;color:#7b9caf;margin:0}.stat-icon{font-size:30px;float:right}.stat-card{min-height:145px}
+.info-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #e9f1f6}.info-row:last-child{border-bottom:0}.info-row>div:first-child{min-width:0}.info-title{font-size:14px;font-weight:800;margin-bottom:4px}.info-caption{color:#7c94a7;font-size:12px}
+.pill{display:inline-block;font-size:11px;font-weight:800;border-radius:100px;padding:7px 11px;background:#eef4f9;color:#678198;white-space:nowrap}
+.pill.good{color:#137d61;background:#ddf9eb}.pill.warn{color:#aa6c23;background:#fff0ce}.pill.bad{color:#bf514e;background:#ffe7e5}.pill.info{color:#286dca;background:#e3f0ff}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,filter .15s;min-height:39px}
+.btn:hover{filter:brightness(.97);transform:translateY(-1px)}.btn-primary{background:#267ddd;color:white;box-shadow:0 6px 16px #267ddd30}.btn-soft{background:#e7f2ff;color:#246bc3}.btn-green{background:#199d7d;color:#fff}.btn-red{background:#fce7e6;color:#ba5650}.btn-orange{background:#fff0d6;color:#9a681e}.btn-outline{background:#fff;border:1px solid var(--line);color:#647d94}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.tiny-note{font-size:11px!important;color:#8b9fae!important}
+.progress{height:12px;border-radius:99px;background:#e6f1f7;overflow:hidden}.progress>div{height:100%;width:0;background:linear-gradient(90deg,#43c1b4,#5b95e9);border-radius:99px;transition:width .45s}
+.detail-box{border:1px solid #d9eaf3;border-radius:16px;background:#f2f9fe;padding:17px}.detail-box .value{font:800 35px 'Outfit',sans-serif;color:#286ca4;margin:0}
+.quick-link{display:flex;align-items:center;gap:13px;padding:18px;border:1px solid #e1edf6;border-radius:17px;background:#fff;transition:.2s}.quick-link:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.quick-link .icon{font-size:30px}.quick-link b{font-size:14px}.quick-link small{display:block;color:#7791a6;font-size:11px;margin-top:4px}
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.swatch{min-height:82px;display:grid;place-items:center;border:2px solid #ffffff90;border-radius:18px;font-weight:900;color:#fff;text-shadow:0 1px 2px #0006;box-shadow:0 5px 16px #2f6d9840}.swatch:hover{transform:translateY(-2px)}
+footer.page-footer{font-size:11px;color:#a1b4c4;margin-top:25px;text-align:center}
+/* Notificación flotante no bloqueante */
+.toast-notice{position:fixed;bottom:22px;right:22px;z-index:120;max-width:360px;padding:12px 16px;border-radius:14px;background:#183451;color:#fff;font-size:12px;font-weight:700;box-shadow:0 12px 28px rgba(24,52,81,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s}
+.toast-notice.show{opacity:1;transform:translateY(0)}
+.toast-notice.bad{background:#b94a48}
+.toast-notice.good{background:#127b61}
+/* Splash: ahora index.html existe por separado del panel principal. */
+.splash-body{overflow-x:hidden}.splash{max-width:1140px;min-height:100vh;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;padding:clamp(24px,6vw,80px)}
+.splash-kicker{display:inline-flex;gap:8px;align-items:center;padding:10px 15px;border-radius:40px;background:#e2f5fa;color:#2883b3;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+.splash h1{font-size:clamp(46px,6vw,78px);letter-spacing:-3px;line-height:1.03;margin:25px 0 17px}.splash h1 span{color:#2c8bbd}.splash p{color:#6a8ca5;font-size:15px;max-width:470px}
+.splash-stats{display:flex;gap:27px;flex-wrap:wrap;margin-top:33px}.splash-stats b{font:800 23px 'Outfit',sans-serif;color:#276eae}.splash-stats small{display:block;color:#819aaa;font-size:11px;margin-top:4px}
+.splash-panel{background:#ffffffdc;border:1px solid #d5e9f3;box-shadow:0 30px 80px #5d9db728;border-radius:28px;padding:34px;position:relative}
+.splash-panel:before{content:'☁️';position:absolute;font-size:90px;top:-51px;right:17px;filter:drop-shadow(0 10px 16px #478fca29)}
+.splash-icon{height:69px;width:69px;border-radius:20px;background:linear-gradient(135deg,#e0f6f5,#e0eaff);display:grid;place-items:center;font-size:35px;margin-bottom:21px}
+.field-label{font-size:12px;font-weight:800;margin:23px 0 8px;display:block;color:#507089}.text-field{width:100%;padding:16px;border:1px solid #cfe1ee;border-radius:13px;background:#f8fcff;color:#25506c;font-size:15px;outline:none}.text-field:focus{border-color:#5aaceb;box-shadow:0 0 0 4px #bde5ff60}.splash-start{width:100%;padding:17px;margin-top:16px;font-size:14px}
+.splash-error{font-size:12px;color:#bb4f53;min-height:21px;margin:9px 0 0}.splash-deco{position:absolute;top:21px;right:29px;font-size:13px;font-weight:800;color:#81b1cb}
+/* Pronóstico y lluvia: capas superpuestas a TODA la pantalla, sin bloquear controles. */
+.weather-hero{min-height:250px;position:relative;display:flex;align-items:center;overflow:hidden;background:linear-gradient(125deg,#7dd9e8,#9fc9f4 52%,#d2eafa);color:#13475f;transition:background .7s}
+.weather-hero.raining{background:linear-gradient(125deg,#78a9cb,#a6c4d8 55%,#cee4f2)}
+.weather-hero h2{font-size:clamp(26px,3.6vw,42px);margin:0 0 7px}.weather-hero p{color:#37657b;max-width:540px}.weather-hero .weather-symbol{font-size:clamp(85px,11vw,140px);position:absolute;right:48px;top:42px;filter:drop-shadow(0 14px 9px #4080ae44)}
+.weather-content{position:relative;z-index:2;max-width:600px}.weather-status{display:inline-block;background:#ffffff9c;color:#2e739a;border-radius:80px;padding:8px 15px;font-size:11px;font-weight:900;margin-bottom:15px}
+.weather-stat{font:800 40px 'Outfit',sans-serif;color:#286d9f;line-height:1}.weather-stat span{font-size:13px;font-family:'DM Sans',sans-serif}.calibration-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.cal-item{border-radius:14px;background:#f2f8fc;border:1px solid #deedf3;padding:14px}.cal-item b{display:block;font-size:12px;color:#7292aa}.cal-item strong{display:block;font:800 23px 'Outfit',sans-serif;margin-top:6px}
+.rain-layer{position:fixed;inset:0;z-index:99;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .55s;background:linear-gradient(to bottom,rgba(198,225,248,.08),rgba(145,203,244,.13))}
+.rain-layer.active{opacity:1}
+.rain-streak{position:absolute;top:-140px;height:var(--length,95px);width:2px;border-radius:6px;background:linear-gradient(transparent,rgba(38,122,190,.56),rgba(234,249,255,.85));left:var(--left);will-change:transform;animation:rain-fall var(--speed,1s) linear infinite;animation-delay:var(--delay)}
+.rain-splash{position:absolute;bottom:var(--bottom);left:var(--left);height:var(--size);width:calc(var(--size) * 1.75);border:2px solid rgba(73,151,200,.36);border-radius:50%;will-change:transform,opacity;animation:rain-ripple var(--speed) ease-out infinite;animation-delay:var(--delay)}
+/* Capa solar animada para lluvia.js */
+.sun-layer{position:fixed;inset:0;z-index:98;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .55s;background:radial-gradient(circle at 88% 12%,rgba(255,223,115,.34),rgba(255,244,196,.12) 38%,transparent 65%)}
+.sun-layer.active{opacity:1}
+.sun-ray{position:absolute;top:-40px;right:-40px;width:460px;height:8px;border-radius:99px;transform-origin:100% 50%;background:linear-gradient(90deg,transparent,rgba(255,206,78,.42));transform:rotate(var(--angle,0deg));animation:sun-pulse 4s ease-in-out infinite alternate}
+@keyframes rain-fall{from{transform:translate3d(0,-120px,0) rotate(9deg)}to{transform:translate3d(-20vw,125vh,0) rotate(9deg)}}
+@keyframes rain-ripple{0%{opacity:0;transform:scale(.3)}30%{opacity:.75}100%{opacity:0;transform:scale(2.5)}}
+@keyframes sun-pulse{from{transform:rotate(var(--angle,0deg)) scaleX(.92)}to{transform:rotate(var(--angle,0deg)) scaleX(1.08)}}
+@media(max-width:1040px){.grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.cols-3{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-emoji{right:20px;opacity:.33}}
+@media(max-width:820px){.app-shell{display:block}.sidebar{height:auto;position:relative;padding:12px 16px;gap:10px;border-right:0;border-bottom:1px solid #dae9f3}.brand{padding:0}.brand-icon{width:36px;height:36px;font-size:20px;border-radius:12px}.brand-name{font-size:17px}.brand-sub{font-size:9px}.nav-caption,.sidebar-note{display:none}.menu{flex-direction:row;overflow-x:auto;gap:4px;padding:0 0 3px}.menu-link{padding:9px 12px}.menu-link.active{box-shadow:inset 0 -3px #4397ee}.content{padding:19px 15px 34px}.splash{grid-template-columns:1fr;gap:28px;max-width:610px}.splash h1{margin-top:18px}.splash-stats{margin-top:18px}}
+@media(max-width:570px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}.hero{padding:24px}.hero-emoji{display:none}.card{padding:20px}.ip-control input{width:115px}.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}.weather-hero{min-height:300px}.weather-hero .weather-symbol{right:15px;top:10px;font-size:70px;opacity:.43}.calibration-grid{grid-template-columns:1fr}.splash{padding:24px}.splash-panel{padding:26px}.splash-panel:before{font-size:64px;top:-35px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

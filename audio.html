@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Música y alarmas · Smart Home UAM</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .au-page { --au-ink:#183451; --au-muted:#738da2; }
+    .au-intro{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+    .au-intro h1{font-size:clamp(33px,3.7vw,52px);margin:0 0 6px}
+    .au-intro .lead{margin:0}
+    .au-connection-tag{border:1px solid #dceaf3;background:#ffffffad;padding:10px 14px;border-radius:15px;color:#5b829b;font-size:11px;font-weight:800;display:flex;align-items:center;gap:7px;white-space:nowrap}
+    .au-dot{width:8px;height:8px;border-radius:100%;background:#49bd9d;box-shadow:0 0 0 4px #49bd9d20}
+    .au-dot.off{background:#c8a5a1;box-shadow:none}
+    .au-player{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(128deg,#2256a7 0%,#3585c3 58%,#6cc7c7 100%);border-radius:29px;color:white;min-height:273px;padding:clamp(23px,3vw,37px);box-shadow:0 24px 44px rgba(35,102,167,.20);display:grid;grid-template-columns:minmax(0,1fr) 285px;align-items:center;gap:20px}
+    .au-player:before{content:'';position:absolute;z-index:-1;inset:-50%;background:radial-gradient(circle at 73% 27%,#ffffff32,transparent 19%),radial-gradient(circle at 25% 73%,#d8ffff1b,transparent 24%);animation:au-shift 12s ease-in-out infinite alternate}
+    .au-player .au-kicker{display:inline-flex;align-items:center;gap:8px;background:#ffffff25;border:1px solid #ffffff40;padding:8px 13px;border-radius:50px;font-size:11px;letter-spacing:.6px;font-weight:800;margin-bottom:12px}
+    .au-player h2{font-size:clamp(30px,3.2vw,43px);color:white;line-height:1.08;margin:0 0 9px}
+    .au-player p{margin:0 0 18px;max-width:490px;font-size:13px;color:#e0f5ff;line-height:1.7}
+    .au-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .au-stop{border:1px solid #ffffff7d;border-radius:12px;padding:11px 18px;background:#ffffffed;color:#216bb0;font-weight:900;font-size:12px;transition:.2s}
+    .au-stop:hover:not(:disabled){transform:translateY(-2px);background:white}
+    .au-stop:disabled{opacity:.5;cursor:not-allowed}
+    .au-progress-label{font-size:11px;font-weight:800;color:#e5f7ff}
+    .au-track-progress{height:7px;max-width:420px;border-radius:100px;background:#ffffff45;overflow:hidden;margin:16px 0 8px}
+    .au-track-progress > div{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,#ffe69b,#fff);transition:width .35s}
+    .au-art{display:grid;place-items:center;position:relative;height:225px;min-width:0}
+    .au-orbit{position:absolute;width:225px;height:225px;border-radius:50%;border:1px solid #ffffff36;box-shadow:0 0 0 30px #ffffff0a,0 0 0 64px #ffffff07}
+    .au-disc{height:152px;width:152px;border-radius:50%;position:relative;display:grid;place-items:center;background:repeating-radial-gradient(circle at center,#174777 0px,#174777 2px,#22598e 3px,#174777 5px);border:7px solid #ffffff32;box-shadow:0 18px 28px #062f6660,inset 0 0 30px #7aceff22;transform:rotate(0deg);animation:au-spin 5s linear infinite;animation-play-state:paused}
+    .au-disc:after{content:'♪';display:grid;place-items:center;width:66px;height:66px;border-radius:50%;background:linear-gradient(140deg,#fff8d0,#f5cb70);color:#245b90;font-size:39px;font-weight:900;box-shadow:0 4px 12px #03346c3a}
+    .au-player.is-playing .au-disc{animation-play-state:running}
+    .au-eq{position:absolute;bottom:5px;display:flex;gap:5px;align-items:end;height:45px}
+    .au-eq i{width:5px;height:var(--h);background:#d4fff9;border-radius:99px;animation:au-eq 750ms ease-in-out infinite alternate;animation-delay:var(--delay);animation-play-state:paused}
+    .au-player.is-playing .au-eq i{animation-play-state:running}
+    .au-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,.85fr);gap:20px;margin-top:22px;align-items:start}
+    .au-library,.au-alert{background:#ffffffef;border:1px solid #deebf4;border-radius:24px;box-shadow:0 12px 37px #306c9830;padding:clamp(18px,2vw,25px)}
+    .au-block-title{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+    .au-block-title .au-head-icon{height:44px;width:44px;border-radius:14px;background:#e8f2ff;display:grid;place-items:center;font-size:22px}
+    .au-block-title h3{font-size:23px;margin:0 0 3px}
+    .au-block-title small{font-size:12px;color:var(--au-muted)}
+    .au-tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .au-track{min-height:160px;position:relative;border:1px solid #dce9f3;background:linear-gradient(150deg,#fff,#f7fbff);border-radius:19px;text-align:left;padding:20px 18px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;color:var(--au-ink);cursor:pointer;transition:border .2s,transform .2s,box-shadow .2s;overflow:hidden}
+    .au-track:hover:not(:disabled){transform:translateY(-3px);border-color:#a3c9ed;box-shadow:0 15px 22px #4a94cd1e}
+    .au-track.is-playing{border:2px solid #3889df;background:linear-gradient(125deg,#eaf5ff,#f8fbff);box-shadow:0 10px 25px #387fcb20}
+    .au-track:disabled{opacity:.55;cursor:not-allowed}
+    .au-track:nth-child(5){grid-column:1 / -1;min-height:145px}
+    .au-track-symbol{font-size:32px;position:relative;z-index:1}
+    .au-track-name{display:block;font-weight:900;font-size:16px;line-height:1.2;margin:10px 0 4px}
+    .au-track-sub{display:block;color:#7990a2;font-size:11px}
+    .au-track-play{position:absolute;right:16px;top:17px;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;color:#2474c9;background:#e7f1fc;font-weight:900}
+    .au-track.is-playing .au-track-play{color:#fff;background:#2879cb}
+    .au-track-shine{position:absolute;right:-25px;bottom:-50px;width:130px;height:130px;background:var(--glow,#a7d6f9);filter:blur(37px);opacity:.3;border-radius:50%;pointer-events:none}
+    .au-playing-badge{display:none;position:absolute;right:17px;bottom:17px;color:#257ecb;background:#eaf3ff;font-size:10px;padding:6px 9px;border-radius:15px;font-weight:900}
+    .au-track.is-playing .au-playing-badge{display:block}
+    .au-alert{position:relative;overflow:hidden}
+    .au-alert-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+    .au-alert-head h3{margin:0;font-size:22px}
+    .au-alert-orb{position:relative;display:grid;place-items:center;margin:8px auto 18px;height:146px;width:146px;border-radius:50%;background:radial-gradient(circle,#f1f9ff 0%,#e4f4ff 58%,#dceeff 75%);border:1px solid #d2e9fa}
+    .au-alert-orb:before,.au-alert-orb:after{content:'';position:absolute;inset:-12px;border:2px solid #7ac3f562;border-radius:50%;animation:au-pulse 3s ease-out infinite}
+    .au-alert-orb:after{animation-delay:1.5s}
+    .au-alert-symbol{font-size:71px;filter:drop-shadow(0 6px 7px #60a4d532);animation:au-bob 3s ease-in-out infinite}
+    .au-alert.alarming .au-alert-orb{background:radial-gradient(circle,#ffe9e9,#ffd8d8);border-color:#fac0c0}
+    .au-alert.alarming .au-alert-orb:before,.au-alert.alarming .au-alert-orb:after{border-color:#ff7777}
+    .au-alert.alarming .au-alert-symbol{animation:au-shake .43s infinite}
+    .au-alert-text{text-align:center;font-size:14px;color:#69849b;line-height:1.5;min-height:44px;margin:0 auto 17px;max-width:330px}
+    .au-toggle{width:100%;border:0;border-radius:13px;background:#226fbd;color:white;font-size:13px;font-weight:900;padding:15px 18px}
+    .au-toggle.is-on{background:#eef5ff;color:#236dbc}
+    .au-toggle:hover{filter:brightness(.98)}
+    .au-status-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #e7f0f7;padding:14px 0;font-size:12px;color:#657d90}
+    .au-status-row b{font-size:11px;white-space:nowrap}
+    .au-status-row:first-of-type{margin-top:8px}
+    .au-mini-pill{padding:6px 9px;border-radius:100px;background:#f0f5fa;color:#5f7b90;font-size:10px;font-weight:900}
+    .au-mini-pill.good{background:#ddf8ef;color:#138664}.au-mini-pill.bad{background:#ffe4e4;color:#b44c48}.au-mini-pill.warn{background:#fff1d8;color:#a97625}
+    .au-footer{text-align:center;font-size:11px;color:#8ba1b5;margin-top:18px}
+    .au-incomplete{font-size:12px;background:#fff3df;padding:12px 14px;border-radius:13px;color:#955c1e;margin:14px 0 0}
+    @keyframes au-shift{to{transform:translate(8%, -5%) rotate(9deg)}}
+    @keyframes au-spin{to{transform:rotate(360deg)}}
+    @keyframes au-eq{from{height:6px}to{height:var(--h)}}
+    @keyframes au-pulse{0%{opacity:.8;transform:scale(.85)}100%{opacity:0;transform:scale(1.4)}}
+    @keyframes au-bob{50%{transform:translateY(-8px)}}
+    @keyframes au-shake{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(8deg)}}
+    @media(max-width:1120px){.au-main{grid-template-columns:1fr}.au-alert{max-width:none}.au-player{grid-template-columns:minmax(0,1fr) 230px}.au-track:nth-child(5){grid-column:auto;min-height:160px}}
+    @media(max-width:670px){.au-player{grid-template-columns:1fr;min-height:240px}.au-art{position:absolute;right:-52px;top:26px;opacity:.22;transform:scale(.86)}.au-copy{position:relative;z-index:2}.au-main{gap:15px}.au-tracks{grid-template-columns:1fr 1fr}.au-track{min-height:148px;padding:15px 12px}.au-track-name{font-size:14px}.au-track-sub{font-size:10px}.au-track:nth-child(5){grid-column:1 / -1}.au-player h2{font-size:32px}.au-player p{max-width:315px}.au-alert-orb{height:120px;width:120px}.au-alert-symbol{font-size:58px}}
+    @media(max-width:365px){.au-tracks{grid-template-columns:1fr}.au-track:nth-child(5){grid-column:auto}.au-track{min-height:120px}}
+    @media(prefers-reduced-motion:reduce){.au-page *, .au-page *:before, .au-page *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="site-shell"></div>
+  <template id="page-template">
+    <main class="au-page">
+      <div class="au-intro">
+        <div>
+          <p class="eyebrow">Audio integrado · Buzzer GPIO 25</p>
+          <h1>Música y alarmas 🎵</h1>
+          <p class="lead">Tus melodías favoritas y alertas de seguridad en un solo lugar.</p>
+        </div>
+        <span class="au-connection-tag"><i class="au-dot" id="au-conn-dot"></i><span id="au-connection">Consultando ESP32…</span></span>
+      </div>
+
+      <section class="au-player" id="au-player" aria-label="Reproductor de melodías">
+        <div class="au-copy">
+          <span class="au-kicker" id="au-player-state">♫ REPRODUCTOR LISTO</span>
+          <h2 id="au-current-song">Elige una melodía</h2>
+          <p id="au-player-description">Selecciona una canción para reproducirla en el buzzer de tu ESP32.</p>
+          <div class="au-controls">
+            <button id="au-stop" data-cmd="stop_melody" class="au-stop" disabled>■ Detener música</button>
+            <span id="au-progress-text" class="au-progress-label">5 melodías disponibles</span>
+          </div>
+          <div class="au-track-progress" aria-label="Avance de la melodía"><div id="au-progress-bar"></div></div>
+        </div>
+        <div class="au-art" aria-hidden="true">
+          <span class="au-orbit"></span>
+          <span class="au-disc"></span>
+          <div class="au-eq">
+            <i style="--h:24px;--delay:0s"></i><i style="--h:42px;--delay:-.35s"></i><i style="--h:31px;--delay:-.6s"></i>
+            <i style="--h:18px;--delay:-.4s"></i><i style="--h:38px;--delay:-.2s"></i>
+            <i style="--h:26px;--delay:-.5s"></i><i style="--h:40px;--delay:-.1s"></i>
+          </div>
+        </div>
+      </section>
+
+      <div class="au-main">
+        <section class="au-library">
+          <div class="au-block-title">
+            <span class="au-head-icon">🎼</span>
+            <div><h3>Biblioteca musical</h3><small>Selecciona una melodía para escucharla</small></div>
+          </div>
+          <div class="au-tracks">
+            <button class="au-track" data-cmd="play_jingle" data-track="jingle" style="--glow:#ffbd93" type="button">
+              <span class="au-track-symbol">🎄</span><span class="au-track-play">▶</span>
+              <span><span class="au-track-name">Navidad</span><span class="au-track-sub">Melodía festiva</span></span>
+              <span class="au-track-shine"></span><span class="au-playing-badge">SONANDO</span>
+            </button>
+            <button class="au-track" data-cmd="play_starwars" data-track="starwars" style="--glow:#a6b4ff" type="button">
+              <span class="au-track-symbol">🌌</span><span class="au-track-play">▶</span>
+              <span><span class="au-track-name">Star Wars</span><span class="au-track-sub">Tema espacial</span></span>
+              <span class="au-track-shine"></span><span class="au-playing-badge">SONANDO</span>
+            </button>
+            <button class="au-track" data-cmd="play_twinkle" data-track="twinkle" style="--glow:#9dddf4" type="button">
+              <span class="au-track-symbol">✨</span><span class="au-track-play">▶</span>
+              <span><span class="au-track-name">Estrellita</span><span class="au-track-sub">Melodía clásica</span></span>
+              <span class="au-track-shine"></span><span class="au-playing-badge">SONANDO</span>
+            </button>
+            <button class="au-track" data-cmd="play_ode" data-track="ode" style="--glow:#c8b2ff" type="button">
+              <span class="au-track-symbol">🎻</span><span class="au-track-play">▶</span>
+              <span><span class="au-track-name">Himno a la alegría</span><span class="au-track-sub">Beethoven</span></span>
+              <span class="au-track-shine"></span><span class="au-playing-badge">SONANDO</span>
+            </button>
+            <button class="au-track" data-cmd="play_birthday" data-track="birthday" style="--glow:#ffb1cb" type="button">
+              <span class="au-track-symbol">🎂</span><span class="au-track-play">▶</span>
+              <span><span class="au-track-name">Cumpleaños feliz</span><span class="au-track-sub">Celebra con una melodía especial</span></span>
+              <span class="au-track-shine"></span><span class="au-playing-badge">SONANDO</span>
+            </button>
+          </div>
+          <div class="au-incomplete" id="au-old-version" hidden>Para controlar las cinco melodías y ver el avance, instala el Dashboard.py incluido.</div>
+        </section>
+        <section class="au-alert" id="au-alert">
+          <div class="au-alert-head">
+            <h3>Alarma inteligente</h3>
+            <span id="alarm-state" class="pill">—</span>
+          </div>
+          <div class="au-alert-orb" aria-hidden="true"><span class="au-alert-symbol">🔔</span></div>
+          <p class="au-alert-text" id="au-alarm-description">Supervisión de gas y movimiento conectada al sistema de seguridad.</p>
+          <button id="btn-alarm" data-cmd="toggle_alarm" class="au-toggle" type="button">Consultando estado…</button>
+          <div class="au-status-row"><span>🔥 Detector de gas</span><span id="au-gas-status" class="au-mini-pill">—</span></div>
+          <div class="au-status-row"><span>🚶 Sensor PIR</span><span id="au-pir-status" class="au-mini-pill">—</span></div>
+          <div class="au-status-row"><span>🎵 Reproductor</span><span id="au-music-status" class="au-mini-pill">—</span></div>
+          <a href="seguridad.html" class="btn btn-soft" style="display:flex;width:100%;margin-top:12px">Abrir seguridad →</a>
+        </section>
+      </div>
+      <p class="au-footer">Melodías reproducidas por el buzzer del ESP32. Las alarmas de seguridad tienen prioridad.</p>
+    </main>
+  </template>
+  <script src="app.js"></script>
+  <script src="audio.js"></script>
+</body>
+</html>

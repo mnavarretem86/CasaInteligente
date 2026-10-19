@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#edf7ff">
+  <title>Centro de Seguridad · Smart Home UDEM</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos exclusivos de seguridad.html: los demás módulos no se modifican. */
+    .sec-page{--sec-ink:#163857;--sec-muted:#6987a1;--sec-accent:#297bdb;--sec-mint:#21a38b;--sec-red:#e65a58;--sec-orange:#ef9950;}
+    .sec-page *{box-sizing:border-box}
+    .sec-page .sec-kicker{font-size:11px;font-weight:900;color:#317cbe;letter-spacing:2.3px;text-transform:uppercase;margin:0 0 10px}
+    .sec-page h1{font-size:clamp(34px,4.1vw,55px);letter-spacing:-1.9px;margin:0 0 13px}
+    .sec-page .sec-intro{color:var(--sec-muted);font-size:14px;line-height:1.75;max-width:760px;margin:0}
+    .sec-page .sec-heading{margin:0 0 24px}
+    .sec-hero{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(134,185,223,.5);border-radius:30px;min-height:285px;background:linear-gradient(116deg,#143f6f 0%,#236fad 52%,#47b6c8 100%);box-shadow:0 23px 50px rgba(33,101,157,.18);padding:clamp(25px,4vw,42px);color:white;display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:20px;align-items:center;margin-bottom:21px;transition:background .4s}
+    .sec-hero:before{content:'';position:absolute;inset:-35%;background:radial-gradient(circle at 90% 45%,rgba(255,255,255,.15),transparent 27%),repeating-linear-gradient(135deg,transparent 0 19px,rgba(255,255,255,.022) 20px 21px);pointer-events:none;z-index:-1}
+    .sec-hero[data-scene="danger"]{background:linear-gradient(112deg,#802c42,#c64c58 55%,#f07e68)}
+    .sec-hero[data-scene="motion"]{background:linear-gradient(112deg,#214e7d,#4975bc 55%,#8a80d3)}
+    .sec-hero[data-scene="offline"]{background:linear-gradient(112deg,#54778a,#7c99a8 65%,#95b1bb)}
+    .sec-eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #ffffff50;border-radius:999px;background:#ffffff20;color:white;font-size:11px;font-weight:900;letter-spacing:.7px;padding:9px 14px;margin-bottom:16px}
+    .sec-eyebrow:before{content:'';width:8px;height:8px;background:#a4ffe1;box-shadow:0 0 0 5px #a4ffe128;border-radius:50%}
+    .sec-hero[data-scene="danger"] .sec-eyebrow:before{background:#ffd5c1;box-shadow:0 0 0 5px #ffd5c133}
+    .sec-hero h2{font-size:clamp(28px,3.4vw,45px);letter-spacing:-1.3px;line-height:1.13;margin:0 0 12px;color:white}
+    .sec-hero p{font-size:14px;color:#e6f7ff;line-height:1.75;max-width:640px;margin:0}
+    .sec-hero-details{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .sec-hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff45;border-radius:13px;background:#ffffff18;backdrop-filter:blur(5px);padding:11px 13px;font-size:12px;font-weight:800}
+    .sec-shield-area{display:grid;place-items:center;min-height:220px;position:relative}
+    .sec-shield-halo{position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid #ffffff4a;box-shadow:inset 0 0 0 17px #ffffff08,0 0 0 23px #ffffff09;animation:sec-shield-breathe 4s ease-in-out infinite}
+    .sec-shield-halo:before,.sec-shield-halo:after{content:'';position:absolute;inset:20px;border:1px dashed #ffffff66;border-radius:50%;animation:sec-turn 34s linear infinite}
+    .sec-shield-halo:after{inset:47px;border-style:solid;opacity:.5;animation-direction:reverse}
+    .sec-shield-icon{position:relative;z-index:2;font-size:100px;filter:drop-shadow(0 15px 22px #102e5b44)}
+    .sec-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
+    .sec-overview-stat{background:#ffffffed;border:1px solid #dceaf5;border-radius:18px;padding:19px 21px;box-shadow:0 9px 28px #376c9d0b;display:flex;align-items:center;gap:15px;min-width:0}
+    .sec-overview-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;background:#e8f5ff;border-radius:15px;font-size:25px}
+    .sec-overview-stat:nth-child(2) .sec-overview-icon{background:#e7f9f2}.sec-overview-stat:nth-child(3) .sec-overview-icon{background:#f0eaff}
+    .sec-overview-stat strong{display:block;font-size:18px;line-height:1.25;letter-spacing:-.4px;overflow-wrap:anywhere}
+    .sec-overview-stat small{display:block;color:#738ca2;font-size:11px;font-weight:800;margin-top:4px}
+    .sec-section-title{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:25px 1px 15px}
+    .sec-section-title h2{font-size:24px;margin:0;letter-spacing:-.6px}.sec-section-title p{font-size:12px;color:#7f98ac;margin:0}
+    .sec-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px}
+    .sec-card{position:relative;isolation:isolate;overflow:hidden;border-radius:27px;border:1px solid #d6e6f2;background:#ffffffed;box-shadow:0 14px 42px rgba(35,102,151,.085);padding:clamp(20px,2.5vw,29px);min-height:475px;display:flex;flex-direction:column;gap:16px;transition:box-shadow .3s,border-color .3s,background .3s}
+    .sec-card[data-mode="danger"]{border-color:#f4b2af;box-shadow:0 17px 45px #d76a6433;background:linear-gradient(155deg,#ffffff,#fff2f1)}
+    .sec-card[data-mode="motion"]{border-color:#c3bbff;box-shadow:0 17px 45px #726fba20;background:linear-gradient(155deg,#ffffff,#f3f1ff)}
+    .sec-card[data-mode="disabled"] .sec-visual{filter:saturate(.6);opacity:.64}
+    .sec-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:2}
+    .sec-card-name{display:flex;align-items:center;gap:12px;min-width:0}
+    .sec-card-icon{display:grid;place-items:center;width:55px;height:55px;border-radius:17px;background:linear-gradient(140deg,#fff1dd,#ffebdf);font-size:26px;flex:none}
+    .sec-card-icon.pir{background:linear-gradient(140deg,#e7eaff,#e7f5ff)}
+    .sec-card-icon.rfid{background:linear-gradient(140deg,#f0eaff,#e8f3ff)}
+    .sec-card-name h3{font-size:19px;margin:0 0 3px;color:#173b5f}.sec-card-name p{color:#8ba2b1;font-size:11px;font-weight:800;margin:0}
+    .sec-card .sec-toggle{white-space:nowrap;padding:11px 17px;border-radius:13px;min-width:94px}
+    .sec-card-description{font-size:13px;line-height:1.7;color:#6c879f;margin:0;min-height:43px}
+    .sec-visual{height:201px;border-radius:23px;position:relative;overflow:hidden;display:grid;place-items:center;isolation:isolate;flex:none}
+    .sec-gas-visual{background:radial-gradient(circle at 50% 67%,#f5e1d5,#faefe9 39%,#fbf9f6 78%);border:1px solid #f7e6d9}
+    .sec-gas-cloud{font-size:93px;filter:drop-shadow(0 13px 17px #b87e6938);z-index:3;transition:filter .3s,transform .3s}
+    .sec-gas-visual:before{content:'';position:absolute;width:160px;height:160px;border:2px solid #e3ad8e4a;border-radius:50%;box-shadow:0 0 0 24px #dba79218,0 0 0 57px #dba79211}
+    .sec-gas-visual.is-active .sec-gas-cloud{animation:sec-gas-float 3.6s ease-in-out infinite}
+    .sec-gas-visual.is-danger{background:radial-gradient(circle,#ffb6a8,#ffe1d9 53%,#fff4ed)}
+    .sec-gas-visual.is-danger .sec-gas-cloud{animation:sec-gas-jitter .6s ease-in-out infinite;filter:drop-shadow(0 7px 20px #e7444e8a)}
+    .sec-gas-puff{position:absolute;width:var(--sz);height:var(--sz);left:var(--left);bottom:-35px;background:radial-gradient(circle,#f29b7ea2,#cf786957,transparent 75%);border-radius:50%;opacity:0;animation:sec-smoke var(--dur) ease-out infinite;animation-delay:var(--delay);animation-play-state:paused}
+    .sec-gas-visual.is-active .sec-gas-puff{animation-play-state:running}
+    .sec-gas-visual.is-danger .sec-gas-puff{background:radial-gradient(circle,#eb6469ce,#d8555870,transparent 76%)}
+    .sec-pir-visual{background:radial-gradient(circle at 50% 50%,#d8f8f2 0%,#d8eff3 40%,#ecf8fc 82%);border:1px solid #dcefe8}
+    .sec-pir-visual.is-danger{background:radial-gradient(circle,#dfd7ff,#e3dffc 47%,#f4f2ff)}
+    .sec-radar{position:absolute;width:206px;height:206px;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 24px,rgba(30,148,156,.18) 25px 26px,transparent 27px 49px);border:2px solid #48aaac30;overflow:hidden}
+    .sec-radar:before,.sec-radar:after{content:'';position:absolute;inset:50% auto auto 50%;width:7px;height:7px;border-radius:50%;background:#239eac;transform:translate(-50%,-50%);box-shadow:0 0 0 10px #58b7b82c}
+    .sec-radar:after{inset:0;width:auto;height:auto;border-radius:50%;box-shadow:none;background:conic-gradient(from 45deg,transparent 0deg,rgba(24,163,153,.05) 275deg,rgba(34,174,155,.36) 355deg,transparent 360deg);transform:none;opacity:0}
+    .sec-pir-visual.is-active .sec-radar:after{opacity:1;animation:sec-radar-sweep 3.4s linear infinite}
+    .sec-pir-visual.is-danger .sec-radar:after{background:conic-gradient(from 45deg,transparent 0deg,rgba(142,106,230,.08) 265deg,rgba(123,81,236,.53) 355deg,transparent 360deg);animation-duration:1.2s}
+    .sec-target{position:absolute;width:13px;height:13px;border-radius:50%;left:64%;top:28%;background:#7b65ed;opacity:0;box-shadow:0 0 0 13px #7b65ed2c,0 0 16px #8f62f8}
+    .sec-pir-visual.is-danger .sec-target{opacity:1;animation:sec-target-pulse .8s ease-in-out infinite}
+    .sec-visual-label{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffffd9;border:1px solid #ffffffad;border-radius:999px;padding:6px 12px;font-size:10px;font-weight:900;color:#4a728a;z-index:4}
+    .sec-event-status{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+    .sec-event-status>div{min-width:0}.sec-event-status small{display:block;font-size:10px;font-weight:900;letter-spacing:1px;color:#829aad;margin-bottom:7px}
+    .sec-event-status strong{display:block;font-size:21px;color:#224763;letter-spacing:-.5px}
+    .sec-event-status .pill{padding:10px 15px;font-size:12px}
+    .sec-rfid-panel{position:relative;isolation:isolate;overflow:hidden;border:1px solid #d6e6f2;border-radius:28px;background:linear-gradient(116deg,#fff 0%,#f4f9ff 52%,#e8f6fc 100%);box-shadow:0 14px 42px #23669716;padding:clamp(20px,2.6vw,32px);display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(24px,3vw,45px);min-height:315px;align-items:center}
+    .sec-rfid-panel[data-mode="denied"]{border-color:#f0b7b2;background:linear-gradient(115deg,#fff,#fff0ee)}
+    .sec-rfid-panel[data-mode="granted"]{border-color:#b4e9d6;background:linear-gradient(115deg,#fff,#ecfbf5)}
+    .sec-rfid-left{display:flex;flex-direction:column;gap:13px;align-self:stretch}
+    .sec-rfid-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .sec-rfid-head h3{margin:0;font-size:23px;color:#194166}
+    .sec-rfid-left>p{font-size:13px;line-height:1.7;color:#69869c;margin:0;max-width:520px}
+    .sec-rfid-digits{padding:19px;background:#ffffffc9;border:1px solid #dbeaf3;border-radius:18px;min-width:0;margin-top:auto}
+    .sec-rfid-digits small{display:block;font-size:11px;color:#8298ac;font-weight:900;margin-bottom:9px;text-transform:uppercase;letter-spacing:.7px}
+    .sec-rfid-digits strong{display:block;font:800 clamp(19px,2vw,29px) 'Outfit',sans-serif;color:#215a87;overflow-wrap:anywhere;letter-spacing:.45px}
+    .sec-reader-display{position:relative;min-height:253px;border:1px solid #cbdff1;border-radius:23px;background:radial-gradient(circle at 50% 35%,#d5eafb,#a9d0f1 70%,#90bddf);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+    .sec-reader-display:before,.sec-reader-display:after{content:'';width:188px;height:188px;position:absolute;border:1px solid #ffffff63;border-radius:50%}
+    .sec-reader-display:after{width:245px;height:245px;opacity:.55}
+    .sec-reader-card{width:min(240px,76%);height:135px;position:relative;z-index:1;transform:rotate(-6deg);border-radius:20px;background:linear-gradient(130deg,#235891,#3b89ba 55%,#65a5c8);border:1px solid #c2e8f69c;box-shadow:0 16px 32px #1d658e48;display:flex;flex-direction:column;justify-content:space-between;padding:19px;overflow:hidden;transition:transform .35s,filter .35s}
+    .sec-reader-card>span:first-child{font-size:24px}.sec-reader-card>span:last-child{font-weight:900;font-size:15px;color:#e5f6ff;letter-spacing:2px}
+    .sec-reader-card:before{content:'';position:absolute;inset:-80% auto -80% -80%;width:55%;background:linear-gradient(90deg,transparent,#ffffff43,transparent);transform:rotate(16deg);transition:left .4s}
+    .sec-reader-display.is-active .sec-reader-card{animation:sec-reader-hover 4s ease-in-out infinite}
+    .sec-reader-display.is-active .sec-reader-card:before{animation:sec-reader-glint 3s linear infinite}
+    .sec-reader-display.is-granted .sec-reader-card{filter:hue-rotate(75deg)}
+    .sec-reader-display.is-denied .sec-reader-card{filter:hue-rotate(155deg)}
+    .sec-reader-display.is-flash .sec-reader-card{transform:rotate(0deg) scale(1.09)}
+    .sec-reader-caption{z-index:1;border:1px solid #ffffffa8;border-radius:999px;padding:8px 14px;background:#ffffffb4;font-size:11px;font-weight:900;color:#2d6794}
+    .sec-rfid-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.sec-rfid-meta .pill{font-size:11px;padding:9px 12px}
+    .sec-footer-panel{display:grid;grid-template-columns:1fr auto;align-items:center;gap:18px;border:1px solid #d7e8f5;border-radius:22px;background:#ffffffed;padding:23px 26px;margin-top:20px;box-shadow:0 10px 29px #23669711}
+    .sec-footer-heading{display:flex;align-items:center;gap:14px}.sec-footer-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;background:#f5efff;font-size:26px}
+    .sec-footer-heading h3{font-size:18px;margin:0 0 5px}.sec-footer-heading p{font-size:12px;color:#6e8ba1;margin:0}
+    .sec-footer-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap}.sec-footer-actions .btn{padding:12px 17px}
+    /* Efectos a pantalla completa, sin interceptar clics ni controlar hardware */
+    .sec-overlay{position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease}
+    .sec-overlay.is-visible{opacity:1;visibility:visible}
+    .sec-overlay-gas{background:radial-gradient(ellipse at center,transparent 30%,rgba(228,79,86,.13) 100%);box-shadow:inset 0 0 130px #df4f6124}
+    .sec-overlay-motion{background:radial-gradient(circle at 48% 45%,#8886da0b 0%,#6862c82a 95%)}
+    .sec-overlay-gas .sec-full-puff{position:absolute;left:var(--left);bottom:-140px;width:var(--size);height:var(--size);border-radius:50%;background:radial-gradient(circle,#e8787278,#e2726a2e,transparent 74%);filter:blur(5px);animation:sec-smoke-full var(--duration) ease-out infinite;animation-delay:var(--delay)}
+    .sec-overlay-motion .sec-wave{position:absolute;left:var(--left);top:var(--top);width:260px;height:260px;margin:-130px;border:3px solid #8272ea81;border-radius:50%;box-shadow:0 0 20px #7d73ee2d;animation:sec-wave 2.9s ease-out infinite;animation-delay:var(--delay)}
+    .sec-alert-bubble{position:fixed;top:74px;left:50%;transform:translateX(-50%) translateY(-16px);z-index:97;pointer-events:none;border-radius:100px;padding:14px 22px;display:flex;gap:10px;align-items:center;max-width:calc(100vw - 30px);font-size:12px;font-weight:900;box-shadow:0 15px 40px #b0484826;color:#9a3035;background:#fff8f8ef;border:1px solid #f2acac;opacity:0;visibility:hidden;transition:opacity .35s,transform .35s,visibility .35s;text-align:center;backdrop-filter:blur(8px)}
+    .sec-alert-bubble.is-visible{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+    .sec-alert-bubble[data-tone="motion"]{color:#5f54aa;background:#f7f5ffef;border-color:#b5aff6}
+    @keyframes sec-shield-breathe{50%{transform:scale(1.065)}}
+    @keyframes sec-turn{to{transform:rotate(360deg)}}
+    @keyframes sec-gas-float{50%{transform:translateY(-9px)}}
+    @keyframes sec-gas-jitter{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+    @keyframes sec-smoke{0%{transform:translate3d(0,20px,0) scale(.4);opacity:0}20%{opacity:.75}100%{transform:translate3d(35px,-230px,0) scale(2.6);opacity:0}}
+    @keyframes sec-radar-sweep{to{transform:rotate(360deg)}}
+    @keyframes sec-target-pulse{50%{transform:scale(1.36);box-shadow:0 0 0 20px #7b65ed17,0 0 20px #8f62f8}}
+    @keyframes sec-reader-hover{50%{transform:rotate(-3deg) translateY(-8px)}}
+    @keyframes sec-reader-glint{to{left:160%}}
+    @keyframes sec-smoke-full{0%{transform:translate3d(0,50px,0) scale(.3);opacity:0}28%{opacity:.72}100%{transform:translate3d(9vw,-115vh,0) scale(2);opacity:0}}
+    @keyframes sec-wave{0%{transform:scale(.16);opacity:.7}100%{transform:scale(5);opacity:0}}
+    @media(max-width:1150px){.sec-hero{grid-template-columns:1fr 185px}.sec-shield-area{min-height:190px}.sec-shield-halo{width:176px;height:176px}.sec-shield-icon{font-size:78px}.sec-overview-stat{padding:16px}}
+    @media(max-width:950px){.sec-overview{grid-template-columns:1fr 1fr}.sec-overview-stat:last-child{grid-column:1/-1}.sec-rfid-panel{grid-template-columns:1fr 1fr}}
+    @media(max-width:690px){.sec-hero{grid-template-columns:1fr;min-height:unset}.sec-shield-area{position:absolute;right:5px;top:8px;opacity:.13;pointer-events:none}.sec-two-col,.sec-rfid-panel{grid-template-columns:1fr}.sec-overview{grid-template-columns:1fr}.sec-overview-stat:last-child{grid-column:auto}.sec-card{min-height:430px}.sec-visual{height:185px}.sec-reader-display{min-height:230px}.sec-footer-panel{grid-template-columns:1fr}.sec-section-title{align-items:flex-start;flex-direction:column;gap:4px}}
+    @media(prefers-reduced-motion:reduce){.sec-page *, .sec-page *:before,.sec-page *:after,.sec-overlay *, .sec-alert-bubble{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="site-shell"></div>
+  <template id="page-template">
+    <div class="sec-page">
+      <div id="sec-gas-overlay" class="sec-overlay sec-overlay-gas" aria-hidden="true"></div>
+      <div id="sec-pir-overlay" class="sec-overlay sec-overlay-motion" aria-hidden="true"></div>
+      <div id="sec-alert-bubble" class="sec-alert-bubble" aria-live="assertive" aria-atomic="true"></div>
+
+      <header class="sec-heading">
+        <p class="sec-kicker">UDEM · Robótica SI15A · Protección inteligente</p>
+        <h1>Centro de seguridad 🛡️</h1>
+        <p class="sec-intro">Control visual y monitoreo de gas, movimiento y credenciales RFID. Las animaciones responden al ESP32 y únicamente aparecen cuando el sensor correspondiente está activado.</p>
+      </header>
+
+      <section class="sec-hero" id="sec-hero" data-scene="idle" aria-label="Estado general del sistema">
+        <div>
+          <span class="sec-eyebrow" id="sec-hero-eyebrow">MONITOREO EN ESPERA</span>
+          <h2 id="sec-hero-title">Seguridad inteligente, en tiempo real</h2>
+          <p id="sec-hero-subtitle">Conecta el ESP32 y activa los sensores para comenzar el monitoreo.</p>
+          <div class="sec-hero-details">
+            <span class="sec-hero-tag">🛡️ <span id="sec-enabled-count">0 sensores activos</span></span>
+            <span class="sec-hero-tag">📡 <span id="sec-last-reading">Esperando conexión…</span></span>
+          </div>
+        </div>
+        <div class="sec-shield-area" aria-hidden="true"><div class="sec-shield-halo"></div><span class="sec-shield-icon" id="sec-shield-icon">🛡️</span></div>
+      </section>
+
+      <div class="sec-overview" aria-label="Estados de sensores">
+        <div class="sec-overview-stat"><span class="sec-overview-icon">🔥</span><div><strong id="sec-gas-mini">Inactivo</strong><small>GAS / HUMO · GPIO 23</small></div></div>
+        <div class="sec-overview-stat"><span class="sec-overview-icon">📡</span><div><strong id="sec-pir-mini">Inactivo</strong><small>MOVIMIENTO · GPIO 14</small></div></div>
+        <div class="sec-overview-stat"><span class="sec-overview-icon">🪪</span><div><strong id="sec-rfid-mini">Inactivo</strong><small>ACCESO RFID · I2C</small></div></div>
+      </div>
+
+      <div class="sec-section-title"><h2>Detección ambiental</h2><p>Los botones controlan directamente cada sensor del ESP32.</p></div>
+      <div class="sec-two-col">
+        <article class="sec-card" id="sec-gas-card" data-mode="disabled">
+          <div class="sec-card-top">
+            <div class="sec-card-name"><span class="sec-card-icon">🔥</span><div><h3>Gas y humo</h3><p>DETECCIÓN DIGITAL · GPIO 23</p></div></div>
+            <button id="btn-gas" data-cmd="toggle_gas" class="btn btn-soft sec-toggle" aria-label="Activar o desactivar sensor de gas">OFF</button>
+          </div>
+          <p class="sec-card-description">Vigila la salida digital del detector. Si indica alerta, aparecen partículas rojas animadas por toda la pantalla.</p>
+          <div class="sec-visual sec-gas-visual" id="sec-gas-visual" aria-hidden="true"><span class="sec-gas-cloud">☁️</span><span class="sec-visual-label" id="sec-gas-visual-label">MONITOREO APAGADO</span></div>
+          <div class="sec-event-status"><div><small>ESTADO ACTUAL</small><strong id="sec-gas-phrase">Sensor desactivado</strong></div><span id="gas-status" class="pill">APAGADO</span></div>
+        </article>
+
+        <article class="sec-card" id="sec-pir-card" data-mode="disabled">
+          <div class="sec-card-top">
+            <div class="sec-card-name"><span class="sec-card-icon pir">🚶</span><div><h3>Movimiento PIR</h3><p>VIGILANCIA DE PRESENCIA · GPIO 14</p></div></div>
+            <button id="btn-pir" data-cmd="toggle_pir" class="btn btn-soft sec-toggle" aria-label="Activar o desactivar sensor PIR">OFF</button>
+          </div>
+          <p class="sec-card-description">El radar se anima cuando está activo. Si detecta movimiento, aparecen ondas de alerta a pantalla completa.</p>
+          <div class="sec-visual sec-pir-visual" id="sec-pir-visual" aria-hidden="true"><span class="sec-radar"></span><span class="sec-target"></span><span class="sec-visual-label" id="sec-pir-visual-label">RADAR APAGADO</span></div>
+          <div class="sec-event-status"><div><small>ESTADO ACTUAL</small><strong id="sec-pir-phrase">Sensor desactivado</strong></div><span id="pir-status" class="pill">APAGADO</span></div>
+        </article>
+      </div>
+
+      <div class="sec-section-title"><h2>Control de accesos</h2><p>Lectura de tarjetas sin accionar puertas ni ventanas.</p></div>
+      <article class="sec-rfid-panel" id="sec-rfid-panel" data-mode="disabled">
+        <div class="sec-rfid-left">
+          <div class="sec-rfid-head"><div class="sec-card-name"><span class="sec-card-icon rfid">🪪</span><div><h3>Identificación RFID</h3><p>LECTOR I2C · VALIDACIÓN DE CREDENCIALES</p></div></div><button id="btn-rfid" data-cmd="toggle_rfid" class="btn btn-soft sec-toggle" aria-label="Activar o desactivar lector RFID">OFF</button></div>
+          <p>La credencial se compara con la lista autorizada del ESP32. Muestra el resultado de la última lectura sin abrir ninguna puerta ni mover la ventana.</p>
+          <div class="sec-rfid-meta"><span id="rfid-status" class="pill">APAGADO</span><span id="sec-rfid-reader-state" class="pill">Lector inactivo</span></div>
+          <div class="sec-rfid-digits"><small>Última credencial detectada</small><strong id="rfid-uid">—</strong></div>
+        </div>
+        <div class="sec-reader-display" id="sec-reader-display" aria-hidden="true"><div class="sec-reader-card"><span>◉</span><span>SMART HOME</span></div><div class="sec-reader-caption" id="sec-reader-caption">ACTIVA EL LECTOR PARA ESCANEAR</div></div>
+      </article>
+
+      <section class="sec-footer-panel" aria-label="Configuración de alarma">
+        <div class="sec-footer-heading"><div class="sec-footer-icon">🔔</div><div><h3>Alarma de seguridad</h3><p>Conserva la configuración del buzzer y del NeoPixel. Este módulo solo muestra el estado.</p></div></div>
+        <div class="sec-footer-actions"><span class="pill" id="alarm-mode">—</span><a class="btn btn-primary" href="audio.html">🎵 Configurar en Audio y alarma →</a></div>
+      </section>
+    </div>
+  </template>
+  <script src="app.js"></script>
+  <script src="seguridad.js"></script>
+</body>
+</html>

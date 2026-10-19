@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f1f8ff">
+  <title>Iluminación RGB | Smart Home UDEM</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .rgb-page{--rgb-text:#16395a;--rgb-sub:#6483a0;color:var(--rgb-text)}
+    .rgb-page *{box-sizing:border-box}
+    .rgb-head{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+    .rgb-tag{font-size:11px;letter-spacing:2px;font-weight:900;text-transform:uppercase;color:#357cbb;margin:0 0 9px}
+    .rgb-head h1{font-size:clamp(34px,4.7vw,58px);letter-spacing:-2px;line-height:1.07;margin:0 0 9px}
+    .rgb-head p{color:var(--rgb-sub);font-size:14px;margin:0}
+    .rgb-top-state{background:#fff;border:1px solid #d8e9f4;border-radius:15px;padding:13px 18px;box-shadow:0 9px 22px #458ba912;text-align:center;min-width:155px}
+    .rgb-top-state span{display:block;color:#7995aa;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.1px}
+    .rgb-top-state strong{display:block;font-family:'Outfit',sans-serif;font-size:20px;margin-top:2px;color:#305f83}
+    .rgb-page-layout{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:22px;align-items:start}
+    .rgb-live-card{min-width:0;background:linear-gradient(143deg,#244674,#253f6e 54%,#1c618b);border:1px solid #ffffff2e;border-radius:29px;color:#fff;box-shadow:0 22px 46px #214a8040;position:relative;overflow:hidden;padding:clamp(23px,3vw,33px);isolation:isolate}
+    .rgb-live-card:before{content:"";position:absolute;width:440px;height:440px;left:50%;top:33%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,var(--rgb-soft,#ffffff10),transparent 70%);transition:background .6s;pointer-events:none;z-index:0}
+    .rgb-live-card:after{content:"";position:absolute;width:330px;height:330px;top:-200px;right:-125px;border:1px solid #ffffff20;border-radius:50%;box-shadow:0 0 0 65px #ffffff06;pointer-events:none}
+    .rgb-live-card > *{position:relative;z-index:1}
+    .rgb-live-kicker{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:#c5e5ff;font-weight:900}
+    .rgb-live-card h2{font-size:clamp(24px,3vw,34px);margin:8px 0 5px;letter-spacing:-.9px}
+    .rgb-live-card p{font-size:12px;color:#c1d9ea;margin:0}
+    .rgb-rig{height:330px;display:flex;align-items:center;justify-content:center;position:relative;margin-top:7px}
+    .rgb-rig:before,.rgb-rig:after{content:"";position:absolute;width:285px;height:285px;border:1px solid #ffffff21;border-radius:50%;pointer-events:none}
+    .rgb-rig:after{width:210px;height:210px;border-style:dashed;animation:rgb-spin 20s linear infinite}
+    .rgb-halo{position:absolute;width:245px;height:245px;border-radius:50%;background:radial-gradient(circle,var(--rgb-soft,transparent),transparent 70%);opacity:0;transform:scale(.75);transition:opacity .6s,transform .7s}
+    .rgb-live-card.is-on .rgb-halo{opacity:.9;transform:scale(1);animation:rgb-breathe 3s ease-in-out infinite alternate}
+    .rgb-strip{position:relative;display:flex;gap:18px;align-items:center;justify-content:center;padding:18px;border:2px solid #81a3c6;border-radius:23px;background:linear-gradient(140deg,#16314e,#0d2746);box-shadow:inset 0 2px 10px #0008,0 15px 23px #0a16368a;transform:perspective(500px) rotateX(7deg)}
+    .rgb-led{position:relative;width:clamp(38px,5vw,58px);aspect-ratio:1;border:5px solid #647891;border-radius:16px;background:#273e58;box-shadow:inset 0 2px 6px #000a;transition:background .45s,box-shadow .45s}
+    .rgb-led:before{content:"";position:absolute;inset:6px;border-radius:9px;background:#647b99;opacity:.65;transition:background .4s,opacity .4s}
+    .rgb-led:after{content:"";position:absolute;inset:-16px;border-radius:30px;background:var(--rgb-light,#fff);filter:blur(16px);opacity:0;transition:opacity .5s}
+    .rgb-live-card.is-on .rgb-led{background:var(--rgb-light,#fff);box-shadow:0 0 14px var(--rgb-light,#fff),0 0 30px var(--rgb-light,#fff),inset 0 2px 9px #ffffff90}
+    .rgb-live-card.is-on .rgb-led:before{background:#fff;opacity:.85}
+    .rgb-live-card.is-on .rgb-led:after{opacity:.48;animation:rgb-breathe 2.1s ease-in-out infinite alternate}
+    .rgb-live-card.is-alarm .rgb-led{animation:rgb-alarm .8s linear infinite alternate}
+    .rgb-active-info{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;border-top:1px solid #ffffff29;padding-top:19px}
+    .rgb-active-info strong{display:block;font-size:26px;font-family:'Outfit',sans-serif;letter-spacing:-.7px}
+    .rgb-active-info small{display:block;font-size:11px;color:#bbd4e9;letter-spacing:.8px;text-transform:uppercase;font-weight:800}
+    .rgb-mini-chip{padding:10px 14px;border-radius:12px;background:#ffffff18;border:1px solid #ffffff28;font-size:12px;font-weight:900}
+    .rgb-palette-card{background:#fff;border:1px solid #d8e8f4;border-radius:29px;box-shadow:0 15px 35px #357aad16;padding:clamp(22px,2.8vw,31px);min-width:0}
+    .rgb-palette-title{display:flex;gap:12px;align-items:center;margin-bottom:13px}
+    .rgb-palette-title > span{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:#eaf3ff;font-size:25px}
+    .rgb-palette-title h3{font-size:24px;letter-spacing:-.7px;margin:0 0 4px}
+    .rgb-palette-title p{margin:0;color:var(--rgb-sub);font-size:12px}
+    .rgb-palette{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:23px}
+    .rgb-choice{position:relative;isolation:isolate;overflow:hidden;text-align:left;min-height:94px;padding:16px;display:flex;align-items:center;gap:13px;border-radius:17px;border:2px solid #e3eef5;background:#f9fcff;color:#244a67;font:800 14px 'DM Sans',system-ui,sans-serif;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .25s,background .2s}
+    .rgb-choice:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,var(--choice-soft,#eef4fa),transparent 65%);z-index:-1}
+    .rgb-choice:hover{transform:translateY(-3px);border-color:#a6cdea;box-shadow:0 11px 24px #367cad1f}
+    .rgb-choice.is-selected{border-color:#3385d7;background:#f1f9ff;box-shadow:0 0 0 3px #5ca7ff25,0 11px 22px #317ab719}
+    .rgb-choice.is-selected:after{content:"✓";position:absolute;right:13px;top:10px;border-radius:50%;background:#2579d6;color:#fff;width:23px;height:23px;display:grid;place-items:center;font-size:13px}
+    .rgb-swatch{width:48px;height:48px;flex:0 0 48px;border-radius:14px;background:var(--choice-color,#bbb);box-shadow:0 0 18px var(--choice-soft,#ddd),inset 0 0 0 2px #ffffff5e}
+    .rgb-choice small{font-size:10px;display:block;color:#7d9aaf;font-weight:700;margin-top:4px}
+    .rgb-choice-off{grid-column:1/-1;min-height:62px;background:#f1f5f9}
+    .rgb-choice-off .rgb-swatch{width:36px;height:36px;flex-basis:36px;border-radius:12px;background:#8195aa;box-shadow:none;display:grid;place-items:center;color:#fff;font-size:19px}
+    .rgb-bottom-note{display:flex;gap:13px;align-items:center;background:#eff8ff;border:1px solid #dbeaf7;border-radius:17px;padding:16px 19px;color:#5b7f9a;font-size:12px;line-height:1.65;margin-top:21px}
+    .rgb-bottom-note .ico{font-size:22px}
+    .rgb-bottom-note strong{color:#296ea2}
+    .rgb-offline{margin-top:12px;font-weight:800;font-size:12px;color:#bcd6e5;min-height:17px}
+    @keyframes rgb-breathe{from{transform:scale(.96);opacity:.7}to{transform:scale(1.05);opacity:1}}
+    @keyframes rgb-spin{to{transform:rotate(360deg)}}
+    @keyframes rgb-alarm{from{filter:brightness(.55)}to{filter:brightness(1.4)}}
+    @media(max-width:1000px){.rgb-page-layout{grid-template-columns:1fr}.rgb-rig{height:280px}.rgb-palette{grid-template-columns:repeat(4,minmax(0,1fr))}.rgb-choice{min-height:95px;flex-direction:column;align-items:start;gap:8px}.rgb-choice-off{grid-column:span 4;flex-direction:row;align-items:center}}
+    @media(max-width:730px){.rgb-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.rgb-choice-off{grid-column:span 2}.rgb-rig{height:250px}.rgb-live-card h2{font-size:27px}}
+    @media(max-width:390px){.rgb-choice{padding:12px;min-height:85px}.rgb-swatch{width:38px;height:38px;flex-basis:38px}}
+    @media(prefers-reduced-motion:reduce){.rgb-page *, .rgb-page *:before,.rgb-page *:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="site-shell"></div>
+  <template id="page-template">
+    <div class="rgb-page">
+      <header class="rgb-head">
+        <div><p class="rgb-tag">Iluminación inteligente · NeoPixel</p><h1>Ambientes con color <span aria-hidden="true">✨</span></h1><p>Cambia la atmósfera de tu espacio con un toque.</p></div>
+        <div class="rgb-top-state"><span>Iluminación RGB</span><strong id="rgb-status">Conectando…</strong></div>
+      </header>
+
+      <main class="rgb-page-layout">
+        <section class="rgb-live-card" id="rgb-live-card" aria-label="Estado actual de los cuatro LED">
+          <span class="rgb-live-kicker">Vista de iluminación</span>
+          <h2>Tu ambiente, a tu manera</h2>
+          <p>El color visualizado corresponde al estado informado por el ESP32.</p>
+          <div class="rgb-rig" aria-hidden="true">
+            <span class="rgb-halo"></span>
+            <div class="rgb-strip"><span class="rgb-led"></span><span class="rgb-led"></span><span class="rgb-led"></span><span class="rgb-led"></span></div>
+          </div>
+          <div class="rgb-active-info">
+            <div><small>Color seleccionado</small><strong id="rgb-color-name">Sin lectura</strong></div>
+            <span class="rgb-mini-chip" id="rgb-light-count">4 LED · GPIO 26</span>
+          </div>
+          <div class="rgb-offline" id="rgb-connection-note" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="rgb-palette-card" aria-label="Selector de colores NeoPixel">
+          <div class="rgb-palette-title"><span aria-hidden="true">🎨</span><div><h3>Selecciona un color</h3><p>Aplica el color en los cuatro LED NeoPixel.</p></div></div>
+          <div class="rgb-palette">
+            <button type="button" class="rgb-choice" data-cmd="rgb_red" id="rgb-btn-red" style="--choice-color:#fa5665;--choice-soft:#fda4b476"><span class="rgb-swatch" aria-hidden="true"></span><span>Rojo<small>Intenso</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_green" id="rgb-btn-green" style="--choice-color:#27c68a;--choice-soft:#88edc276"><span class="rgb-swatch" aria-hidden="true"></span><span>Verde<small>Natural</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_blue" id="rgb-btn-blue" style="--choice-color:#357bf2;--choice-soft:#87b3ff76"><span class="rgb-swatch" aria-hidden="true"></span><span>Azul<small>Sereno</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_yellow" id="rgb-btn-yellow" style="--choice-color:#ffbe32;--choice-soft:#ffe29576"><span class="rgb-swatch" aria-hidden="true"></span><span>Amarillo<small>Cálido</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_purple" id="rgb-btn-purple" style="--choice-color:#aa6bea;--choice-soft:#c4a0ef76"><span class="rgb-swatch" aria-hidden="true"></span><span>Morado<small>Elegante</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_cyan" id="rgb-btn-cyan" style="--choice-color:#2bced7;--choice-soft:#85e8ed76"><span class="rgb-swatch" aria-hidden="true"></span><span>Cian<small>Fresco</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_white" id="rgb-btn-white" style="--choice-color:#f3f8ff;--choice-soft:#b1cbe476"><span class="rgb-swatch" aria-hidden="true" style="border:1px solid #b7cadb"></span><span>Blanco<small>Neutro</small></span></button>
+            <button type="button" class="rgb-choice" data-cmd="rgb_off" id="rgb-btn-off" style="--choice-color:#758ba3;--choice-soft:#b6c6d576"><span class="rgb-swatch" aria-hidden="true"></span><span>Apagado<small>Sin luz</small></span></button>
+          </div>
+        </section>
+      </main>
+      <div class="rgb-bottom-note"><span class="ico" aria-hidden="true">🛡️</span><div><strong>Prioridad de seguridad.</strong> Ante una alerta de gas o movimiento, el sistema puede activar el color rojo de alarma. Al desaparecer la alerta, elige de nuevo el color que prefieras.</div></div>
+    </div>
+  </template>
+  <script src="app.js"></script>
+  <script src="iluminacion.js"></script>
+</body>
+</html>

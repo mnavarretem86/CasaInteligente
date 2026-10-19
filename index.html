@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7faff">
+  <meta name="description" content="Accede a Smart Home UdeM y supervisa tu sistema domótico conectado a ESP32.">
+  <title>Smart Home | Universidad de Managua</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="inicio.css">
+  <script async src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="app.js"></script>
+  <script defer src="index.js"></script>
+</head>
+<body>
+  <main class="entry-layout">
+    <section class="campus" aria-label="Universidad de Managua">
+      <img class="campus-photo" src="UdeM-2021.png" alt="Edificio principal de la Universidad de Managua" fetchpriority="high">
+      <div class="campus-tint" aria-hidden="true"></div>
+      <div class="campus-brand">
+        <span class="campus-brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></svg>
+        </span>
+        <span>Smart Home <small>UdeM · Robótica SI15A</small></span>
+      </div>
+      <div class="campus-caption">
+        <span class="campus-line"></span>
+        <p>Universidad de Managua</p>
+        <h2>Tecnología que conecta<br>tu espacio.</h2>
+      </div>
+      <span class="campus-counter">Sistema de control IoT</span>
+    </section>
+
+    <section class="entry-side" aria-labelledby="entry-title">
+      <header class="entry-header">
+        <div class="entry-logo"><span class="entry-logo-dot"></span> SMART HOME <span class="entry-logo-muted">/ UdeM</span></div>
+        <span class="entry-version">Robótica · SI15A</span>
+      </header>
+
+      <div class="entry-content">
+        <span class="entry-eyebrow"><span class="entry-eyebrow-dot"></span> CENTRO DE CONTROL</span>
+        <h1 id="entry-title">Tu hogar,<br><span>conectado.</span></h1>
+        <p class="entry-lead">Accede a tu sistema domótico y consulta el estado de los sensores y dispositivos en tiempo real.</p>
+
+        <form id="start-form" class="entry-form" novalidate>
+          <div class="entry-form-head">
+            <h2>Conectar dispositivo</h2>
+            <p>Verificaremos la conexión antes de abrir el panel.</p>
+          </div>
+
+          <label for="setup-ip">Dirección IP del ESP32</label>
+          <div class="entry-input-wrap">
+            <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7 9h10M7 15h10"/></svg>
+            <input id="setup-ip" name="ip" type="text" inputmode="url" spellcheck="false" autocomplete="off" placeholder="192.168.1.50" required aria-describedby="ip-help">
+            <span class="entry-input-label">ESP32</span>
+          </div>
+          <p id="ip-help" class="entry-hint">Usa la dirección que aparece en la pantalla LCD.</p>
+
+          <button id="start-button" class="entry-submit" type="submit">
+            <span class="submit-content"><span id="start-button-label">Conectar y continuar</span><svg class="submit-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+            <span class="submit-spinner" aria-hidden="true"></span>
+          </button>
+          <div class="entry-connection" id="connection-line" role="status" aria-live="polite">
+            <span class="status-indicator"></span>
+            <span id="connection-message">Listo para verificar la conexión.</span>
+          </div>
+        </form>
+
+        <div class="entry-details" aria-label="Módulos principales">
+          <div><span class="detail-icon">◈</span><span>Monitoreo<br><small>Sensores IoT</small></span></div>
+          <div><span class="detail-icon">⌁</span><span>Automatización<br><small>Control remoto</small></span></div>
+          <div><span class="detail-icon">♧</span><span>Seguridad<br><small>Estado en vivo</small></span></div>
+        </div>
+      </div>
+
+      <footer class="entry-footer"><span>© 2026 Smart Home · Universidad de Managua</span><span class="entry-footer-connection">ESP32 + MicroPython</span></footer>
+    </section>
+  </main>
+
+  <dialog id="notice-fallback" class="notice-fallback" aria-labelledby="notice-title">
+    <div class="notice-icon" id="notice-icon">!</div>
+    <h2 id="notice-title">Conexión no disponible</h2>
+    <p id="notice-text">Revisa la dirección del dispositivo y vuelve a intentarlo.</p>
+    <form method="dialog"><button type="submit">Entendido</button></form>
+  </dialog>
+</body>
+</html>

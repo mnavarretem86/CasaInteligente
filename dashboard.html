@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ecf7fd">
+  <title>Centro de control | Smart Home UDEM</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .db-page{--db-blue:#2479da;--db-ink:#183a58;--db-muted:#6e8aa3;--db-stroke:#d7e8f2;--db-shadow:0 12px 34px rgba(38,112,164,.09);color:var(--db-ink)}
+    .db-page *{box-sizing:border-box}
+    .db-page a,.db-page button{transition:transform .22s,box-shadow .22s,background-color .22s,border-color .22s}
+    .db-page a:hover,.db-page button:hover:not(:disabled){transform:translateY(-2px)}
+    .db-top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+    .db-eyebrow{font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#3287c5;margin:0 0 11px}
+    .db-top h1{font-size:clamp(34px,4vw,54px);letter-spacing:-1.9px;line-height:1.08;margin:0 0 9px;color:#18395d}
+    .db-lead{color:#6b8aa2;font-size:14px;margin:0;line-height:1.6}
+    .db-sync{display:flex;gap:11px;align-items:center;background:#ffffffd9;border:1px solid #dceaf4;border-radius:16px;padding:12px 15px;box-shadow:0 5px 16px rgba(64,135,173,.06)}
+    .db-sync-indicator{width:10px;height:10px;border-radius:50%;background:#dfa950;box-shadow:0 0 0 5px #dfa9501f;flex:0 0 auto}
+    .db-sync[data-state="live"] .db-sync-indicator{background:#19aa87;box-shadow:0 0 0 5px #19aa8722;animation:db-pulse 2.8s infinite}
+    .db-sync[data-state="offline"] .db-sync-indicator{background:#e86b69;box-shadow:0 0 0 5px #e86b6922;animation:none}
+    .db-sync-title{font-size:12px;font-weight:900;color:#315f7b;display:block}
+    .db-sync-sub{font-size:11px;color:#7894a8;display:block;margin-top:3px}
+    .db-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:30px;background:linear-gradient(115deg,#114d88 0%,#277cbd 52%,#36a8ba 100%);padding:clamp(24px,3.2vw,39px);display:grid;grid-template-columns:minmax(0,1fr) 320px;align-items:center;min-height:300px;gap:12px;box-shadow:0 26px 50px #266eab2b;color:#fff;border:1px solid #ffffff35;margin-bottom:19px;transition:background .5s}
+    .db-hero[data-state="alert"]{background:linear-gradient(115deg,#72394c,#b35960 56%,#df8a71)}
+    .db-hero[data-state="offline"]{background:linear-gradient(115deg,#506b80,#799aad 56%,#9db6bc)}
+    .db-hero:before{content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:#ffffff12;top:-290px;right:0;z-index:-1}
+    .db-hero:after{content:'';position:absolute;width:440px;height:440px;border-radius:50%;border:1px solid #ffffff19;right:-160px;bottom:-300px;z-index:-1}
+    .db-hero-kicker{display:inline-flex;gap:9px;align-items:center;border:1px solid #ffffff4b;background:#ffffff1b;border-radius:999px;padding:9px 13px;font-weight:900;letter-spacing:1.15px;font-size:10px;color:#e4faff;margin-bottom:20px}
+    .db-hero-kicker:before{content:'';width:8px;height:8px;background:#77eed0;border-radius:100%;box-shadow:0 0 0 5px #6af6c22b}
+    .db-hero[data-state="offline"] .db-hero-kicker:before{background:#ffded3}
+    .db-hero h2{color:white;font-size:clamp(30px,3.4vw,45px);letter-spacing:-1.6px;line-height:1.13;margin:0 0 11px;max-width:530px}
+    .db-hero-copy{font-size:14px;line-height:1.75;color:#e0f1fd;margin:0;max-width:540px}
+    .db-hero-quick{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .db-hero-quick span{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff40;background:#ffffff1c;color:white;padding:10px 12px;border-radius:13px;font-size:12px;font-weight:800;backdrop-filter:blur(7px)}
+    .db-hero-art{width:300px;height:240px;position:relative;display:grid;place-items:center;margin-left:auto}
+    .db-orbit{position:absolute;width:248px;height:248px;left:26px;top:-4px;border:1px solid #ffffff4a;border-radius:50%;animation:db-orbit 35s linear infinite}
+    .db-orbit:after{content:'';position:absolute;top:20px;left:37px;width:13px;height:13px;border-radius:50%;background:#96edfa;box-shadow:0 0 0 7px #ffffff21,0 0 30px #b5faffb5}
+    .db-orbit.inner{width:185px;height:185px;left:58px;top:28px;opacity:.65;animation-duration:27s;animation-direction:reverse}
+    .db-house-wrap{width:170px;height:170px;display:grid;place-items:center;position:relative;border-radius:43px;background:#ffffff20;border:1px solid #ffffff48;backdrop-filter:blur(12px);box-shadow:0 22px 42px #0b3d6140, inset 0 0 28px #ffffff10;animation:db-float 5.4s ease-in-out infinite}
+    .db-house-wrap svg{width:114px;height:114px;filter:drop-shadow(0 12px 18px #073d5a4a)}
+    .db-art-dot{position:absolute;width:54px;height:54px;display:grid;place-items:center;background:#ffffffdb;border:1px solid #fff;border-radius:17px;font-size:27px;box-shadow:0 8px 22px #0c46844a;animation:db-float 4.5s ease-in-out infinite}
+    .db-art-dot.one{top:19px;right:17px;animation-delay:-1s}.db-art-dot.two{left:6px;bottom:11px;animation-delay:-2.5s}
+    .db-section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:26px 0 16px}
+    .db-section-head h2{font-size:clamp(22px,2.45vw,30px);letter-spacing:-.7px;color:#1b4368;margin:0 0 4px}
+    .db-section-head p{font-size:12px;color:#7c97aa;margin:0}
+    .db-section-link{color:#2271bd;display:inline-flex;gap:7px;align-items:center;font-size:12px;font-weight:900;padding:8px 0}
+    .db-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+    .db-metric{background:#ffffffed;border:1px solid var(--db-stroke);border-radius:23px;padding:22px;min-width:0;position:relative;overflow:hidden;box-shadow:var(--db-shadow);min-height:200px}
+    .db-metric:after{content:'';position:absolute;width:140px;height:140px;border-radius:50%;right:-75px;top:-75px;background:#e7f5ff8a;pointer-events:none}
+    .db-metric:nth-child(2):after{background:#e0faf2}.db-metric:nth-child(3):after{background:#e0f4fc}.db-metric:nth-child(4):after{background:#e8edff}
+    .db-metric-top{display:flex;align-items:center;justify-content:space-between;gap:9px;position:relative;z-index:1}
+    .db-metric-icon{width:48px;height:48px;display:grid;place-items:center;background:#e6f2ff;border-radius:15px;font-size:25px}
+    .db-metric:nth-child(2) .db-metric-icon{background:#e8f9f2}.db-metric:nth-child(3) .db-metric-icon{background:#e9f7ff}.db-metric:nth-child(4) .db-metric-icon{background:#e9edff}
+    .db-metric-state{border-radius:100px;font-size:10px;font-weight:900;padding:7px 9px;color:#738aa0;background:#eef3f7;max-width:55%;text-align:center}
+    .db-metric-state[data-tone="good"]{color:#127d60;background:#dff8eb}
+    .db-metric-state[data-tone="warn"]{color:#9f7130;background:#fff0d6}
+    .db-metric-state[data-tone="bad"]{color:#c04b54;background:#ffe8e7}
+    .db-metric-label{font-size:12px;font-weight:800;color:#708da4;margin:19px 0 7px}
+    .db-metric-value{font:800 clamp(27px,2.7vw,39px)/1.14 'Outfit','DM Sans',sans-serif;letter-spacing:-1.2px;color:#194b70;margin:0;overflow-wrap:anywhere}
+    .db-metric-value.word{font-size:clamp(24px,2.05vw,31px)}
+    .db-metric-foot{margin:10px 0 0;font-size:11px;color:#8ba3b5}
+    .db-main-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;margin-top:19px}
+    .db-panel{background:#ffffffee;border:1px solid var(--db-stroke);border-radius:24px;padding:25px;box-shadow:var(--db-shadow);min-width:0}
+    .db-panel-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .db-panel-head h3{margin:0;color:#1d466b;font-size:21px;letter-spacing:-.5px}
+    .db-panel-head p{margin:6px 0 0;font-size:12px;color:#849caf}
+    .db-device{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid #e7f0f6}
+    .db-device:last-child{border-bottom:0;padding-bottom:0}
+    .db-device:first-child{padding-top:0}
+    .db-device-ident{display:flex;align-items:center;gap:12px;min-width:0}
+    .db-device-icon{height:46px;width:46px;flex:0 0 46px;display:grid;place-items:center;background:#edf6fe;border-radius:15px;font-size:23px}
+    .db-device-name{font-size:14px;font-weight:900;color:#28516c}
+    .db-device-note{font-size:11px;color:#859fb0;margin-top:4px}
+    .db-device-action{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+    .db-state{border-radius:100px;background:#eef3f7;padding:8px 11px;font-size:10px;font-weight:900;color:#667f96;white-space:nowrap}
+    .db-state[data-tone="good"]{background:#e0f9ed;color:#168368}.db-state[data-tone="warn"]{background:#fff2df;color:#a06d30}.db-state[data-tone="bad"]{background:#ffe8e7;color:#be4e57}.db-state[data-tone="info"]{background:#e3f1ff;color:#276eb4}
+    .db-mini-button{border:1px solid #d8e7f2;background:#f7fbfe;color:#487695;font-weight:900;border-radius:10px;padding:10px 13px;font-size:11px;white-space:nowrap;box-shadow:0 3px 9px #2f7ea810}
+    .db-mini-button.selected{background:#2c84d6;color:white;border-color:#2c84d6}
+    .db-mini-button:disabled{opacity:.5}
+    .db-automations{display:grid;gap:11px}
+    .db-auto-row{display:flex;justify-content:space-between;gap:13px;align-items:center;background:#f4f9fd;border:1px solid #e5eef6;padding:15px;border-radius:15px}
+    .db-auto-ident{display:flex;gap:11px;align-items:center;min-width:0}
+    .db-auto-ident > span{font-size:24px}
+    .db-auto-name{font-size:13px;color:#325b77;font-weight:900}
+    .db-auto-detail{font-size:11px;color:#87a0b1;margin-top:4px}
+    .db-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:9px}
+    .db-link{display:flex;align-items:center;gap:12px;background:#ffffffed;border:1px solid #d9eaf5;border-radius:18px;padding:18px 16px;min-width:0;box-shadow:0 7px 21px #3e86ac0f}
+    .db-link:hover{border-color:#98c9e9;box-shadow:0 14px 28px #357eb825}
+    .db-link-icon{height:45px;width:45px;display:grid;place-items:center;background:#eaf5ff;border-radius:14px;font-size:23px;flex:0 0 auto}
+    .db-link-title{font-size:13px;font-weight:900;color:#244f72}
+    .db-link-sub{color:#8099ac;font-size:11px;margin-top:5px}
+    .db-link-arrow{margin-left:auto;color:#86aac6;font-weight:900;font-size:18px}
+    .db-offline-overlay{opacity:.74}
+    .db-update-alert{display:none;margin-top:13px;background:#fff1e9;border:1px solid #f8daca;color:#98583b;border-radius:13px;padding:12px 15px;font-size:12px;font-weight:800}
+    .db-page[data-connection="lost"] .db-update-alert{display:block}
+    @keyframes db-orbit{to{transform:rotate(360deg)}}
+    @keyframes db-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes db-pulse{50%{box-shadow:0 0 0 9px #19aa870d}}
+    @media(max-width:1280px){.db-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.db-links{grid-template-columns:repeat(2,minmax(0,1fr))}.db-main-grid{grid-template-columns:1fr 1fr}.db-hero{grid-template-columns:minmax(0,1fr) 265px}.db-hero-art{transform:scale(.87);transform-origin:right center}}
+    @media(max-width:970px){.db-main-grid{grid-template-columns:1fr}.db-hero{grid-template-columns:minmax(0,1fr) 190px}.db-hero-art{transform:scale(.7)}}
+    @media(max-width:660px){.db-hero{display:block;min-height:0}.db-hero-art{position:absolute;right:-115px;top:15px;transform:scale(.58);opacity:.23;pointer-events:none}.db-hero h2{max-width:95%}.db-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.db-metric{padding:15px;border-radius:18px;min-height:180px}.db-metric-icon{width:41px;height:41px;font-size:21px}.db-metric-state{font-size:9px;padding:5px}.db-metric-label{margin-top:13px}.db-metric-value{font-size:clamp(24px,6vw,34px)}.db-metric-value.word{font-size:20px}.db-panel{padding:19px}.db-links{grid-template-columns:1fr}.db-top h1{font-size:37px}.db-device{align-items:flex-start}.db-device-action{max-width:55%;align-items:flex-end}}
+    @media(max-width:390px){.db-cards{grid-template-columns:1fr}.db-device{flex-wrap:wrap}.db-device-action{max-width:none;width:100%;justify-content:flex-start}.db-sync{width:100%}}
+    @media(prefers-reduced-motion:reduce){.db-page *, .db-page *:before,.db-page *:after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="site-shell"></div>
+  <template id="page-template">
+    <div class="db-page" id="db-page" data-connection="waiting">
+      <div class="db-top">
+        <div>
+          <p class="db-eyebrow">Smart Home · Panel general</p>
+          <h1>Centro de control <span aria-hidden="true">⌂</span></h1>
+          <p class="db-lead">Gestiona el estado de tu hogar y supervisa cada dispositivo desde un solo lugar.</p>
+        </div>
+        <div class="db-sync" id="db-sync" data-state="waiting" role="status" aria-live="polite">
+          <span class="db-sync-indicator"></span>
+          <div><span class="db-sync-title" id="db-sync-title">Conectando con ESP32</span><span class="db-sync-sub" id="db-sync-time">Esperando datos actualizados</span></div>
+        </div>
+      </div>
+
+      <section class="db-hero" id="db-hero" data-state="waiting" aria-label="Estado del hogar">
+        <div>
+          <span class="db-hero-kicker" id="db-hero-kicker">ESTADO DEL SISTEMA</span>
+          <h2 id="db-hero-title">Supervisión inteligente de tu hogar</h2>
+          <p class="db-hero-copy" id="db-hero-copy">Conectando con tus sensores y actuadores para mostrar su estado actual.</p>
+          <div class="db-hero-quick">
+            <span>📡 <strong id="db-active-count">--</strong> sensores activos</span>
+            <span>🛡️ <strong id="db-alert-count">--</strong> alertas activas</span>
+            <span>⏱️ <strong id="db-uptime">--</strong> de actividad</span>
+          </div>
+        </div>
+        <div class="db-hero-art" aria-hidden="true">
+          <span class="db-orbit"></span><span class="db-orbit inner"></span>
+          <div class="db-house-wrap">
+            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <path d="M15 52 57 17c2-2 4-2 6 0l42 35" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M28 49v49c0 4 3 7 7 7h50c4 0 7-3 7-7V49" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+              <rect x="49" y="69" width="24" height="36" rx="5" fill="#c3f3ff" fill-opacity=".96"/>
+              <circle cx="65" cy="88" r="2" fill="#1f81ae"/>
+            </svg>
+          </div>
+          <span class="db-art-dot one">🌡️</span><span class="db-art-dot two">💡</span>
+        </div>
+      </section>
+      <p class="db-update-alert" id="db-offline-message">Se interrumpió la conexión con el ESP32. Los valores mostrados corresponden a la última lectura recibida.</p>
+
+      <div class="db-section-head">
+        <div><h2>Ambiente y seguridad</h2><p>Lecturas y eventos reportados por los sensores.</p></div>
+        <a href="diagnostico.html" class="db-section-link">Diagnóstico del sistema <span aria-hidden="true">↗</span></a>
+      </div>
+      <section class="db-cards" aria-label="Lecturas ambientales y de seguridad">
+        <article class="db-metric"><div class="db-metric-top"><span class="db-metric-icon">🌡️</span><span class="db-metric-state" id="db-temp-state">Sin datos</span></div><p class="db-metric-label">Temperatura interior</p><p class="db-metric-value" id="db-temp">-- °C</p><p class="db-metric-foot" id="db-temp-note">Sensor DHT11</p></article>
+        <article class="db-metric"><div class="db-metric-top"><span class="db-metric-icon">💧</span><span class="db-metric-state" id="db-hum-state">Sin datos</span></div><p class="db-metric-label">Humedad ambiental</p><p class="db-metric-value" id="db-hum">-- %</p><p class="db-metric-foot">Humedad relativa</p></article>
+        <article class="db-metric"><div class="db-metric-top"><span class="db-metric-icon" id="db-rain-icon">🌦️</span><span class="db-metric-state" id="db-rain-state">Sin datos</span></div><p class="db-metric-label">Condición de lluvia</p><p class="db-metric-value word" id="db-rain">--</p><p class="db-metric-foot" id="db-rain-note">Sensor de lluvia</p></article>
+        <article class="db-metric"><div class="db-metric-top"><span class="db-metric-icon" id="db-security-icon">🛡️</span><span class="db-metric-state" id="db-security-state">Sin datos</span></div><p class="db-metric-label">Seguridad del hogar</p><p class="db-metric-value word" id="db-security">--</p><p class="db-metric-foot" id="db-security-note">Gas y movimiento PIR</p></article>
+      </section>
+
+      <section class="db-main-grid" aria-label="Dispositivos y automatización">
+        <article class="db-panel">
+          <div class="db-panel-head"><div><h3>Dispositivos conectados</h3><p>Consulta su estado y accede a los controles.</p></div><a href="actuadores.html" class="db-section-link">Ver todos ↗</a></div>
+          <div class="db-device"><div class="db-device-ident"><div class="db-device-icon">🪟</div><div><div class="db-device-name">Ventana</div><div class="db-device-note">Servo GPIO 13</div></div></div><div class="db-device-action"><span id="db-window" class="db-state">--</span><a href="actuadores.html" class="db-mini-button">Controlar ↗</a></div></div>
+          <div class="db-device"><div class="db-device-ident"><div class="db-device-icon">🌀</div><div><div class="db-device-name">Ventilador</div><div class="db-device-note">Control de giro</div></div></div><div class="db-device-action"><span id="db-fan" class="db-state">--</span><a href="actuadores.html" class="db-mini-button">Controlar ↗</a></div></div>
+          <div class="db-device"><div class="db-device-ident"><div class="db-device-icon">💡</div><div><div class="db-device-name">Iluminación interior</div><div class="db-device-note">Encendido remoto</div></div></div><div class="db-device-action"><span id="db-led" class="db-state">--</span><button type="button" id="db-led-on" data-cmd="led_on" class="db-mini-button">Encender</button><button type="button" id="db-led-off" data-cmd="led_off" class="db-mini-button">Apagar</button></div></div>
+          <div class="db-device"><div class="db-device-ident"><div class="db-device-icon">🌈</div><div><div class="db-device-name">Iluminación RGB</div><div class="db-device-note">NeoPixel · 4 LED</div></div></div><div class="db-device-action"><span id="db-rgb" class="db-state">--</span><a href="iluminacion.html" class="db-mini-button">Controlar ↗</a></div></div>
+        </article>
+        <article class="db-panel">
+          <div class="db-panel-head"><div><h3>Automatización y acceso</h3><p>Funciones configuradas en tu sistema.</p></div><a href="seguridad.html" class="db-section-link">Seguridad ↗</a></div>
+          <div class="db-automations">
+            <div class="db-auto-row"><div class="db-auto-ident"><span>🌧️</span><div><div class="db-auto-name">Ventana automática</div><div class="db-auto-detail" id="db-auto-rain-note">Apertura y cierre según lluvia</div></div></div><span id="db-auto-rain" class="db-state">--</span></div>
+            <div class="db-auto-row"><div class="db-auto-ident"><span>🔔</span><div><div class="db-auto-name">Alarma de seguridad</div><div class="db-auto-detail">Avisos ante gas o movimiento</div></div></div><span id="db-auto-alarm" class="db-state">--</span></div>
+            <div class="db-auto-row"><div class="db-auto-ident"><span>🚶</span><div><div class="db-auto-name">Detector de movimiento</div><div class="db-auto-detail" id="db-pir-note">Sensor PIR</div></div></div><span id="db-pir" class="db-state">--</span></div>
+            <div class="db-auto-row"><div class="db-auto-ident"><span>🪪</span><div><div class="db-auto-name">Control de acceso RFID</div><div class="db-auto-detail" id="db-rfid-note">Lectura de credenciales</div></div></div><span id="db-rfid" class="db-state">--</span></div>
+          </div>
+        </article>
+      </section>
+
+      <div class="db-section-head"><div><h2>Accesos rápidos</h2><p>Abre las secciones de tu hogar inteligente.</p></div></div>
+      <nav class="db-links" aria-label="Accesos rápidos">
+        <a class="db-link" href="clima.html"><span class="db-link-icon">🌡️</span><span><span class="db-link-title">Clima interior</span><span class="db-link-sub" style="display:block">Temperatura y humedad</span></span><span class="db-link-arrow">↗</span></a>
+        <a class="db-link" href="lluvia.html"><span class="db-link-icon">🌧️</span><span><span class="db-link-title">Lluvia</span><span class="db-link-sub" style="display:block">Detección y ventana</span></span><span class="db-link-arrow">↗</span></a>
+        <a class="db-link" href="pronostico.html"><span class="db-link-icon">🌤️</span><span><span class="db-link-title">Pronóstico</span><span class="db-link-sub" style="display:block">Mi estación y Managua</span></span><span class="db-link-arrow">↗</span></a>
+        <a class="db-link" href="seguridad.html"><span class="db-link-icon">🛡️</span><span><span class="db-link-title">Seguridad</span><span class="db-link-sub" style="display:block">Gas, movimiento y RFID</span></span><span class="db-link-arrow">↗</span></a>
+        <a class="db-link" href="audio.html"><span class="db-link-icon">🎵</span><span><span class="db-link-title">Audio</span><span class="db-link-sub" style="display:block">Melodías y alarmas</span></span><span class="db-link-arrow">↗</span></a>
+        <a class="db-link" href="diagnostico.html"><span class="db-link-icon">📶</span><span><span class="db-link-title">Conectividad</span><span class="db-link-sub" style="display:block">ESP32 y sensores</span></span><span class="db-link-arrow">↗</span></a>
+      </nav>
+    </div>
+  </template>
+  <script src="app.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

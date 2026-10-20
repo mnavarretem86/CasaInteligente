@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Diagnóstico · Smart Home UDEM</title><link rel="stylesheet" href="styles.css"></head>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Diagnóstico · Smart Home UDEM</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="toastify-theme.css"></head>
 <body><div class="app-shell" id="site-shell"></div><template id="page-template">
 <div class="page-heading"><p class="eyebrow">Pruebas del ESP32</p><h1>Estado y diagnóstico 🩺</h1><p class="lead">Comprueba Wi-Fi, lecturas y errores sin activar actuadores ni cambiar otros sensores.</p></div>
 <div class="grid cols-3">
@@ -10,4 +10,4 @@
 <div class="grid cols-2" style="margin-top:18px">
  <article class="card"><h3>📋 Información del sistema</h3><div class="info-row"><span>Versión</span><b id="diag-version">--</b></div><div class="info-row"><span>Tiempo encendido</span><b id="diag-uptime">--</b></div><div class="info-row"><span>Peticiones HTTP</span><b id="diag-http">--</b></div><div class="info-row"><span>Único servo de ventana</span><b id="diag-servo">GPIO13</b></div><div class="info-row"><span>RFID inicializado</span><b id="diag-rfid">--</b></div></article>
  <article class="card"><h3>🔎 Probar API</h3><p>Solicita <code>/api/diagnostics</code> para comprobar que el servidor responde correctamente. No mueve servos ni cambia estados.</p><button id="test-api" class="btn btn-primary" style="margin:15px 0">Ejecutar prueba HTTP</button><p class="stat-sub" id="diag-result">Sin prueba manual</p><p class="tiny-note">Si las reconexiones aumentan continUDEMente, revisa la alimentación del ESP32, la señal Wi-Fi y el consumo del servo.</p></article>
-</div></template><script src="app.js"></script><script src="diagnostico.js"></script></body></html>
+</div></template><script src="notify.js"></script><script src="app.js"></script><script src="diagnostico.js"></script></body></html>

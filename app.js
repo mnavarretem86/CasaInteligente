@@ -7,8 +7,8 @@
   const DEFAULT_IP = '192.168.1.50';
   const CACHE_MAX_AGE_MS = 15000;
   const ONLINE_AGE_MS = 6500;
-  const STATUS_TIMEOUT_MS = 5500;
-  const COMMAND_TIMEOUT_MS = 7000;
+  const STATUS_TIMEOUT_MS = 4000;
+  const COMMAND_TIMEOUT_MS = 9500;
   const FAILS_BEFORE_OFFLINE = 3;
 
   const menu = [
@@ -28,7 +28,7 @@
     stopped: false, busy: false, refreshAfter: false,
     refresh: null, activeControllers: new Set(),
     pendingRequests: [], activeRequest: false,
-    pendingStatus: null
+    pendingStatus: null, pendingCommands: 0, reportedOffline: false
   };
 
   function getIp() {
@@ -87,6 +87,53 @@
     if (!el) return;
     el.className = 'connection-pill ' + (isOnline === true ? 'online' : isOnline === false ? 'offline' : '');
     el.textContent = message || (isOnline === true ? 'ESP32 conectado' : isOnline === false ? 'Sin conexión' : 'Verificando ESP32…');
+  }
+
+  const COMMAND_MESSAGES = Object.freeze({
+    led_on: 'Luz encendida',
+    led_off: 'Luz apagada',
+    win_open: 'Abriendo ventana',
+    win_close: 'Cerrando ventana',
+    fan_der: 'Ventilador a la derecha',
+    fan_izq: 'Ventilador a la izquierda',
+    fan_off: 'Ventilador detenido',
+    rgb_red: 'Color rojo aplicado',
+    rgb_green: 'Color verde aplicado',
+    rgb_blue: 'Color azul aplicado',
+    rgb_yellow: 'Color amarillo aplicado',
+    rgb_purple: 'Color morado aplicado',
+    rgb_cyan: 'Color cian aplicado',
+    rgb_white: 'Luz blanca aplicada',
+    rgb_off: 'Luces RGB apagadas',
+    toggle_temp: 'Sensor de clima actualizado',
+    toggle_gas: 'Sensor de gas actualizado',
+    toggle_pir: 'Sensor de movimiento actualizado',
+    toggle_rain: 'Sensor de lluvia actualizado',
+    toggle_rfid: 'Lector RFID actualizado',
+    toggle_autorain: 'Ventana automática actualizada',
+    toggle_alarm: 'Alarma actualizada',
+    play_jingle: 'Reproduciendo Navidad',
+    play_starwars: 'Reproduciendo Star Wars',
+    play_twinkle: 'Reproduciendo Estrellita',
+    play_ode: 'Reproduciendo Himno a la alegría',
+    play_birthday: 'Reproduciendo Cumpleaños feliz',
+    stop_melody: 'Música detenida',
+    rain_dry: 'Lectura en seco guardada',
+    rain_wet: 'Lectura en mojado guardada',
+    rain_reset: 'Calibración reiniciada'
+  });
+
+  function shortError(error) {
+    const message = String(error?.message || error || '').trim();
+    if (/tiempo de espera|timeout|abort/i.test(message)) return 'El ESP32 tardó demasiado';
+    if (/failed to fetch|networkerror|load failed|network request failed|sin conexi[oó]n/i.test(message)) {
+      return 'Sin conexión con el ESP32';
+    }
+    if (/alarma.*prioridad|prioridad.*alarma/i.test(message)) return 'La alarma tiene prioridad';
+    if (/puerta eliminada/i.test(message)) return 'Solo está disponible la ventana';
+    if (/comando desconocido|comando inv[aá]lido/i.test(message)) return 'Acción no disponible';
+    if (/respuesta incompleta|json incompleto|respuesta no corresponde/i.test(message)) return 'Respuesta del ESP32 inválida';
+    return 'No pudimos confirmar el cambio';
   }
 
   function validStatus(data) {
@@ -181,10 +228,13 @@
     if (typeof command !== 'string' || !/^[a-z0-9_]+$/.test(command)) {
       return Promise.reject(new Error('Comando inválido.'));
     }
+    // No reintentar automáticamente una orden que pudo haber sido ejecutada.
+    app.pendingCommands += 1;
+    clearTimeout(app.timer);
     return api('/api/cmd?c=' + encodeURIComponent(command), COMMAND_TIMEOUT_MS, true)
-      .then(data => {
+      .finally(() => {
+        app.pendingCommands = Math.max(0, app.pendingCommands - 1);
         if (app.refresh) app.refresh();
-        return data;
       });
   }
 
@@ -302,7 +352,7 @@
         rememberStatus(data, ip);
         global.location.reload();
       } catch (error) {
-        global.alert('No se cambió la IP: no fue posible verificar el ESP32 en esa dirección. ' + error.message);
+        global.SmartNotify?.error('No se pudo conectar a esa IP', {duration: 3500});
       } finally {
         button.disabled = false;
         button.textContent = 'Guardar IP';
@@ -323,7 +373,7 @@
     async function refresh() {
       if (app.stopped) return;
       if (app.busy) { app.refreshAfter = true; return; }
-      if (document.hidden) { schedule(interval); return; }
+      if (document.hidden || app.pendingCommands > 0) { schedule(interval); return; }
       app.busy = true;
       clearTimeout(app.timer);
       try {
@@ -331,7 +381,15 @@
         if (app.stopped) return;
         app.fails = 0;
         connection(true, 'ESP32 conectado');
-        config.onData(data);
+        if (app.reportedOffline) {
+          app.reportedOffline = false;
+          global.SmartNotify?.success('Conexión recuperada', {duration: 1800});
+        }
+        try { config.onData(data); }
+        catch (renderError) {
+          console.error('Error al actualizar la interfaz:', renderError);
+          global.SmartNotify?.error('No se pudo actualizar la pantalla', {duration: 3500});
+        }
       } catch (error) {
         if (app.stopped) return;
         app.fails += 1;
@@ -339,6 +397,10 @@
         const recent = app.lastOkAt > 0 && age < CACHE_MAX_AGE_MS;
         if (app.fails >= FAILS_BEFORE_OFFLINE) {
           connection(false, 'ESP32 sin respuesta');
+          if (!app.reportedOffline) {
+            app.reportedOffline = true;
+            global.SmartNotify?.warning('El ESP32 no responde', {duration: 3200});
+          }
           if (config.onError) config.onError(error);
         } else if (recent) {
           connection(age <= ONLINE_AGE_MS, age <= ONLINE_AGE_MS ?
@@ -365,10 +427,11 @@
       button.addEventListener('click', async () => {
         if (button.disabled) return;
         button.disabled = true;
-        try { await sendCommand(button.dataset.cmd); }
-        catch (error) {
-          global.alert('No se pudo confirmar la acción: ' + error.message +
-            '\nComprueba el estado del dispositivo antes de volver a pulsar.');
+        try {
+          await sendCommand(button.dataset.cmd);
+          global.SmartNotify?.success(COMMAND_MESSAGES[button.dataset.cmd] || '¡Listo!', {duration: 1800});
+        } catch (error) {
+          global.SmartNotify?.error(shortError(error), {duration: 3500});
         } finally { button.disabled = false; }
       });
     });

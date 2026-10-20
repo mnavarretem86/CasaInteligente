@@ -104,43 +104,14 @@
     }
   }
 
-  async function showNotice(icon, title, text) {
-    if (window.Swal && typeof Swal.fire === 'function') {
-      await Swal.fire({
-        icon,
-        title,
-        text,
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#287ee0',
-        background: '#ffffff',
-        color: '#16344d',
-        customClass: { popup: 'entry-swal-popup' }
-      });
-      return;
-    }
-    const dialog = document.getElementById('notice-fallback');
-    document.getElementById('notice-title').textContent = title;
-    document.getElementById('notice-text').textContent = text;
-    document.getElementById('notice-icon').textContent = icon === 'warning' ? '!' : '×';
-    if (dialog && typeof dialog.showModal === 'function') {
-      dialog.showModal();
-    } else {
-      window.alert(title + '\n' + text);
-    }
-  }
-
-  function openLoadingNotice() {
-    if (!window.Swal || typeof Swal.fire !== 'function') return;
-    Swal.fire({
-      title: 'Conectando al ESP32',
-      text: 'Verificando el servidor de Smart Home…',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading(),
-      background: '#ffffff',
-      color: '#16344d'
-    });
+  function showNotice(icon, title, message) {
+    const kind = icon === 'warning' ? 'warning' : icon === 'success' ? 'success' : 'error';
+    const detail = String(message || '');
+    const short = /tiempo|tarde|respondió a tiempo/i.test(detail) ? 'El ESP32 tardó demasiado'
+      : /llegar|fetch|red wi-fi|conectado al wi-fi/i.test(detail) ? 'No encuentro el ESP32'
+      : /ip|dirección|ipv4/i.test(detail) ? 'Revisa la dirección IP'
+      : title;
+    window.SmartNotify?.show(short, kind, {duration: 3500});
   }
 
   input.addEventListener('input', () => {
@@ -156,13 +127,13 @@
       ip = normalizeAddress(input.value);
     } catch (error) {
       setStatus('error', error.message);
-      await showNotice('warning', 'Revisa la dirección IP', error.message);
+      showNotice('warning', 'Revisa la dirección IP', error.message);
       return;
     }
 
     setWorking(true);
     setStatus('checking', 'Comprobando comunicación con el ESP32…');
-    openLoadingNotice();
+    window.SmartNotify?.info('Conectando…', {duration: 1500});
 
     try {
       const initialStatus = await checkEsp32(ip);
@@ -174,24 +145,12 @@
         localStorage.setItem(STORAGE_KEY, ip);
       }
       setStatus('success', 'ESP32 conectado. Abriendo panel…');
-      if (window.Swal) {
-        Swal.close();
-        await Swal.fire({
-          icon: 'success',
-          title: 'Conexión establecida',
-          text: 'El ESP32 está disponible.',
-          showConfirmButton: false,
-          timer: 850,
-          timerProgressBar: true,
-          background: '#ffffff',
-          color: '#16344d'
-        });
-      }
+      window.SmartNotify?.success('Conectado', {duration: 1800});
+      await new Promise(resolve => setTimeout(resolve, 650));
       window.location.assign('dashboard.html');
     } catch (error) {
-      if (window.Swal) Swal.close();
       setStatus('error', 'No se pudo verificar la conexión.');
-      await showNotice('error', 'No se pudo conectar', error.message);
+      showNotice('error', 'No se pudo conectar', error.message);
     } finally {
       setWorking(false);
     }

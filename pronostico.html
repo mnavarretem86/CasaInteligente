@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pronóstico · Smart Home UDEM</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="toastify-theme.css">
   <style>
     /* Solo esta pagina: no cambia styles.css ni los otros modulos. */
     .wx-header {display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 23px}
@@ -169,7 +169,7 @@
     </section>
     <p class="wx-footnote">🌐 <strong>Sobre la comparación:</strong> Managua se usa como referencia y puede estar lejos de tu ESP32. La estación detecta contacto con agua; Open-Meteo ofrece condiciones modeladas para Managua, no una medición de la misma placa. La precipitación actual corresponde al intervalo que proporciona el servicio, mientras que la probabilidad máxima es para el día. Fuente: <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.</p>
   </template>
-  <script src="app.js"></script>
+  <script src="notify.js"></script><script src="app.js"></script>
   <script src="pronostico.js"></script>
 </body>
 </html>

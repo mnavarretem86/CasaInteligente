@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff8ff">
   <title>Clima interior | Smart Home UDEM</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="toastify-theme.css">
   <style>
     .cl-page { --cl-navy:#183a5e; --cl-soft:#6f8ba5; width:100%; }
     .cl-page *, .cl-page *::before, .cl-page *::after { box-sizing:border-box; }
@@ -194,7 +194,7 @@
       <p class="cl-footer-note">Temperatura y humedad obtenidas directamente del DHT11. Los valores se actualizan automáticamente mientras el ESP32 está conectado.</p>
     </main>
   </template>
-  <script src="app.js"></script>
+  <script src="notify.js"></script><script src="app.js"></script>
   <script src="clima.js"></script>
 </body>
 </html>

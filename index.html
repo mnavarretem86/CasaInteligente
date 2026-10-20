@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="inicio.css">
-  <script async src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="toastify-theme.css">
+  <script defer src="notify.js"></script>
   <script defer src="app.js"></script>
   <script defer src="index.js"></script>
 </head>
@@ -79,11 +80,6 @@
     </section>
   </main>
 
-  <dialog id="notice-fallback" class="notice-fallback" aria-labelledby="notice-title">
-    <div class="notice-icon" id="notice-icon">!</div>
-    <h2 id="notice-title">Conexión no disponible</h2>
-    <p id="notice-text">Revisa la dirección del dispositivo y vuelve a intentarlo.</p>
-    <form method="dialog"><button type="submit">Entendido</button></form>
-  </dialog>
+
 </body>
 </html>

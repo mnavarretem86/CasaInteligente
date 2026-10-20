@@ -37,6 +37,11 @@ const SecurityScreen = (() => {
       particle.style.setProperty('--size', (26 + Math.random() * 86).toFixed(0) + 'px');
       particle.style.setProperty('--duration', (4.8 + Math.random() * 6.2).toFixed(2) + 's');
       particle.style.setProperty('--delay', (-Math.random() * 11).toFixed(2) + 's');
+      if (className === 'sec-gas-speck') {
+        particle.style.setProperty('--top', (Math.random() * 100).toFixed(1) + '%');
+        particle.style.setProperty('--size', (2 + Math.random() * 7).toFixed(0) + 'px');
+        particle.style.setProperty('--duration', (2.2 + Math.random() * 4).toFixed(2) + 's');
+      }
       if (className === 'sec-wave') {
         particle.style.setProperty('--top', (Math.random() * 100).toFixed(1) + '%');
       }
@@ -54,7 +59,8 @@ const SecurityScreen = (() => {
       const node = el(id);
       if (node) document.body.appendChild(node);
     }
-    buildParticles('sec-gas-overlay', 'sec-full-puff', 28);
+    buildParticles('sec-gas-overlay', 'sec-full-puff', 46);
+    buildParticles('sec-gas-overlay', 'sec-gas-speck', 58);
     buildParticles('sec-pir-overlay', 'sec-wave', 5);
     const gasVisual = el('sec-gas-visual');
     if (gasVisual) {
@@ -89,9 +95,34 @@ const SecurityScreen = (() => {
     setText('sec-shield-icon', icon);
   }
 
+  function renderGasMeter(d, active, danger) {
+    const panel = el('sec-gas-meter');
+    const fill = el('sec-gas-meter-fill');
+    const track = el('sec-gas-meter-track');
+    const hasAnalog = d.gas_analog_enabled === true && d.gas_analog_ok === true &&
+      d.gas_analog_ready === true && typeof d.gas_level === 'number' && Number.isFinite(d.gas_level);
+    const digitalMode = !hasAnalog;
+    const level = !active ? 0 : hasAnalog ? Math.min(100, Math.max(0, d.gas_level)) : danger ? 100 : 0;
+    if (panel) { panel.dataset.mode = digitalMode ? 'digital' : 'analog'; panel.dataset.alert = danger ? 'yes' : 'no'; }
+    if (fill) fill.style.setProperty('--gas-width', level + '%');
+    if (track) {
+      track.setAttribute('aria-valuenow', String(Math.round(level)));
+      track.setAttribute('aria-valuetext', !active ? 'Sensor inactivo' :
+        hasAnalog ? 'Respuesta relativa: ' + Math.round(level) + ' de 100' : danger ? 'Umbral digital activado' : 'Umbral digital sin activar');
+    }
+    setText('sec-gas-meter-title', hasAnalog ? 'Respuesta relativa del sensor' : 'Señal de detección');
+    setText('sec-gas-reading', !active ? '—' : hasAnalog ? Math.round(level) + '/100' : danger ? 'ALERTA' : 'NORMAL');
+    setText('sec-gas-meter-detail', !active ? 'Activa el detector de gas.' :
+      hasAnalog ? 'Escala relativa, no equivale a % de gas ni a ppm.' :
+      d.gas_analog_enabled === true ?
+        (d.gas_analog_ok === false ? 'Sin lectura analógica. Se mantiene el aviso digital.' : 'Preparando lectura analógica. El aviso digital sigue funcionando.') :
+        'Modo digital: muestra si se superó el umbral del módulo; no mide concentración.');
+  }
+
   function presentGas(d) {
     const active = d.gas_active === true;
     const danger = active && d.gas_alert === true;
+    renderGasMeter(d, active, danger);
     SmartHome.buttonState('btn-gas', active, 'ON', 'OFF');
     el('btn-gas')?.classList.add('sec-toggle');
     mode('sec-gas-card', !active ? 'disabled' : danger ? 'danger' : 'ready');
@@ -182,6 +213,7 @@ const SecurityScreen = (() => {
     const count = Number(gas) + Number(pir) + Number(rfid);
     setText('sec-enabled-count', `${count} ${count === 1 ? 'sensor activo' : 'sensores activos'}`);
     setText('sec-last-reading', 'Datos recibidos · ' + new Date().toLocaleTimeString('es-NI', {hour: '2-digit', minute: '2-digit', second: '2-digit'}));
+    SmartHome.buttonState('btn-alarm-sec', d.auto_alarm === true, 'Silenciar alarma', 'Activar alarma');
     SmartHome.pill('alarm-mode', d.auto_alarm === true ? 'ALARMA HABILITADA' : 'ALARMA SILENCIADA',
       d.auto_alarm === true ? 'info' : 'warn');
 
@@ -189,7 +221,7 @@ const SecurityScreen = (() => {
     if (gasDanger) {
       toggle('sec-gas-overlay', 'is-visible', true);
       heroPresentation('danger', '⚠ ALERTA DE GAS', '¡Atención! Sensor de gas activado',
-        'El ESP32 informa una condición de alerta en la entrada digital del sensor. Comprueba el ambiente y sigue las medidas de seguridad correspondientes.', '🚨');
+        'El sensor detectó una señal de gas. ' + (d.auto_alarm === true ? 'La alarma está habilitada.' : 'Activa la alarma sonora si la necesitas.'), '🚨');
       const banner = el('sec-alert-bubble');
       if (banner) banner.dataset.tone = 'gas';
       setText('sec-alert-bubble', pirMotion ? '🚨 Alerta de gas y movimiento detectados' : '🚨 ¡ALERTA! Sensor de gas activado');
@@ -232,6 +264,12 @@ const SecurityScreen = (() => {
       'Se perdió una respuesta de red. Los últimos estados visualizados pueden no estar actualizados; comprueba la conexión antes de sacar conclusiones.', '📶');
     setText('sec-last-reading', 'Esperando respuesta…');
     setText('sec-gas-mini', 'Sin datos recientes');
+    setText('sec-gas-reading', '—');
+    setText('sec-gas-meter-detail', 'Sin datos recientes del ESP32.');
+    const meter = el('sec-gas-meter');
+    if (meter) meter.dataset.alert = 'no';
+    const fill = el('sec-gas-meter-fill');
+    if (fill) fill.style.setProperty('--gas-width', '0%');
     setText('sec-pir-mini', 'Sin datos recientes');
     setText('sec-rfid-mini', 'Sin datos recientes');
     // No cambiar los botones ni mandar órdenes por una pérdida de conexión.

@@ -22,11 +22,13 @@ if (testButton) {
     testButton.disabled = true;
     try {
       const diag = await SmartHome.diagnostics();
+      window.SmartNotify?.show(diag.ok ? 'Diagnóstico listo' : 'Respuesta inválida', diag.ok ? 'success' : 'warning');
       SmartHome.text('diag-result', diag.ok
         ? '✅ API respondió. Memoria libre: ' + (diag.free_mem ?? 'no disponible') +
           ' bytes. Reinicios Wi-Fi: ' + (diag.wifi_reconnects ?? '--') + '.'
         : 'Respuesta no válida.');
     } catch (err) {
+      window.SmartNotify?.error('No se pudo revisar el ESP32', {duration: 3500});
       SmartHome.text('diag-result', '❌ Prueba fallida: ' + err.message);
     } finally {
       testButton.disabled = false;

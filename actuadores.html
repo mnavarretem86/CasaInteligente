@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f0f8ff">
   <title>Actuadores | Smart Home UDEM</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="toastify-theme.css">
   <style>
     .act-page{--act-ink:#16395a;--act-muted:#66839e;color:var(--act-ink)}
     .act-page *{box-sizing:border-box}
@@ -167,7 +167,7 @@
       <div class="act-note"><span class="act-note-icon" aria-hidden="true">ℹ️</span><div><strong>Estados informados por el ESP32.</strong> Los gráficos representan las órdenes y estados del controlador; no sustituyen una confirmación física del movimiento.</div></div>
     </div>
   </template>
-  <script src="app.js"></script>
+  <script src="notify.js"></script><script src="app.js"></script>
   <script src="actuadores.js"></script>
 </body>
 </html>

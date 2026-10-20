@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf8f0">
+  <meta name="description" content="Mi Planta: monitor de humedad de tierra, temperatura y humedad ambiental de Smart Home UdeM.">
+  <title>Mi Planta · Smart Home UdeM</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="toastify-theme.css">
+  <link rel="stylesheet" href="responsive.css">
+  <link rel="stylesheet" href="planta.css">
+</head>
+<body>
+<div class="app-shell" id="site-shell"></div>
+<template id="page-template">
+  <main class="plant-page">
+    <div class="plant-heading">
+      <div>
+        <p class="plant-overline"><span aria-hidden="true">✺</span> JARDÍN INTELIGENTE · GREENLIFE</p>
+        <h1>Mi <span>Planta</span><span class="plant-title-leaf" aria-hidden="true">✿</span></h1>
+        <p>Cuidar una plantita es más fácil cuando sabes cómo se siente. Sus datos vienen de tus sensores reales.</p>
+      </div>
+      <span class="plant-online" id="plant-live"><span class="plant-online-dot"></span><span id="plant-live-label">Esperando ESP32</span></span>
+    </div>
+
+    <section class="plant-hero" aria-label="Mi planta virtual">
+      <div class="plant-hero-copy">
+        <span class="plant-tag">✦ TU PEQUEÑO JARDÍN</span>
+        <h2 id="plant-greeting">¡Hola, soy tu plantita!</h2>
+        <p id="plant-message">Estoy esperando mis primeras lecturas para contarte cómo está mi tierra.</p>
+        <div class="plant-hero-chips">
+          <span id="plant-happy-chip" class="plant-hero-chip">🌱 Esperando lectura</span>
+          <span class="plant-hero-chip">📡 ESP32 · GPIO 32</span>
+        </div>
+      </div>
+      <div class="plant-illustration" id="plant-character" data-mood="waiting" role="img" aria-label="Plantita ilustrada; esperando lecturas">
+        <div class="plant-sun" aria-hidden="true"></div>
+        <span class="plant-star star-a" aria-hidden="true">✦</span>
+        <span class="plant-star star-b" aria-hidden="true">✳</span>
+        <span class="plant-heart heart-a" aria-hidden="true">♥</span>
+        <span class="plant-heart heart-b" aria-hidden="true">♥</span>
+        <div class="plant-cloud cloud-a" aria-hidden="true"></div>
+        <svg class="plant-svg" viewBox="0 0 370 345" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="plant-leaf-gradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9cf4a3"/><stop offset="100%" stop-color="#31b980"/></linearGradient>
+            <linearGradient id="plant-pot-gradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffce96"/><stop offset="100%" stop-color="#e18b66"/></linearGradient>
+            <linearGradient id="plant-rim-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe8b8"/><stop offset="100%" stop-color="#e99a70"/></linearGradient>
+            <filter id="plant-shadow"><feGaussianBlur stdDeviation="8"/></filter>
+          </defs>
+          <ellipse cx="191" cy="322" rx="95" ry="13" fill="#2c806d" opacity=".16" filter="url(#plant-shadow)"/>
+          <g class="plant-greenery">
+            <path d="M188 176 Q177 119 184 59" stroke="#268956" stroke-width="13" fill="none" stroke-linecap="round"/>
+            <path d="M184 115 Q112 97 107 51" stroke="#268956" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M185 143 Q254 108 265 73" stroke="#268956" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path class="plant-leaf leaf-left" d="M178 128 C113 132 75 102 63 53 C133 38 171 66 178 128 Z" fill="url(#plant-leaf-gradient)" stroke="#228f64" stroke-width="3"/>
+            <path class="plant-leaf leaf-right" d="M197 131 C203 65 258 39 305 53 C296 121 256 145 197 131 Z" fill="url(#plant-leaf-gradient)" stroke="#228f64" stroke-width="3"/>
+            <path class="plant-leaf leaf-top" d="M187 100 C140 64 149 15 184 6 C229 36 216 79 187 100 Z" fill="#62d28f" stroke="#278960" stroke-width="3"/>
+            <path d="M174 122 Q121 87 89 70 M200 124 Q255 101 286 67 M187 95 Q190 45 186 23" stroke="#207d5b" stroke-width="3" fill="none" opacity=".48" stroke-linecap="round"/>
+          </g>
+          <g class="plant-body">
+            <path d="M113 202 L263 202 L246 303 Q192 323 136 303 Z" fill="url(#plant-pot-gradient)" stroke="#c57b59" stroke-width="3"/>
+            <path d="M147 293 Q191 305 233 292" stroke="#ffddb3" opacity=".5" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <rect x="98" y="179" width="181" height="39" rx="18" fill="url(#plant-rim-gradient)" stroke="#cf885e" stroke-width="3"/>
+            <path d="M113 196 Q188 205 264 196" stroke="#fff1cf" stroke-width="4" fill="none" stroke-linecap="round" opacity=".68"/>
+            <ellipse cx="147" cy="255" rx="13" ry="9" fill="#ee9a82" opacity=".73"/>
+            <ellipse cx="233" cy="255" rx="13" ry="9" fill="#ee9a82" opacity=".73"/>
+            <g class="plant-eyes">
+              <path class="plant-eye-open" d="M151 237 Q160 227 168 237 M210 237 Q219 227 227 237" fill="none" stroke="#674b48" stroke-width="5.5" stroke-linecap="round"/>
+              <path class="plant-eye-closed" d="M150 234 Q160 240 169 234 M209 234 Q219 240 228 234" fill="none" stroke="#674b48" stroke-width="4.8" stroke-linecap="round"/>
+            </g>
+            <path class="plant-mouth-happy" d="M179 249 Q190 260 201 249" fill="none" stroke="#684744" stroke-width="4.2" stroke-linecap="round"/>
+            <path class="plant-mouth-sad" d="M180 256 Q190 246 200 256" fill="none" stroke="#684744" stroke-width="4.2" stroke-linecap="round"/>
+            <ellipse class="plant-mouth-surprised" cx="190" cy="251" rx="5.5" ry="7.5" fill="#684744"/>
+            <path d="M115 225 Q92 222 86 245" stroke="#dc9372" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M260 227 Q283 224 288 241" stroke="#dc9372" stroke-width="9" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <span class="plant-floor" aria-hidden="true"></span>
+      </div>
+      <span class="plant-hero-deco plant-deco-one" aria-hidden="true"></span>
+      <span class="plant-hero-deco plant-deco-two" aria-hidden="true"></span>
+    </section>
+
+    <section class="plant-grid" aria-label="Lecturas de la planta">
+      <article class="plant-panel plant-soil-panel">
+        <div class="plant-panel-head">
+          <div class="plant-title-line"><span class="plant-metric-icon">💧</span><div><h3>Humedad de la tierra</h3><p>Sensor capacitivo · GPIO 32</p></div></div>
+          <span class="plant-mini-tag" id="plant-soil-badge">Esperando</span>
+        </div>
+        <div class="plant-soil-number"><strong id="plant-soil-percent">--</strong><span>%</span></div>
+        <p class="plant-soil-sub" id="plant-soil-description">Conectando con el sensor de la maceta…</p>
+        <div class="plant-earth-wrap">
+          <div class="plant-earth-labels"><span>TIERRA SECA</span><span>TIERRA HÚMEDA</span></div>
+          <div class="plant-earth-meter" id="plant-earth-meter" role="progressbar" aria-label="Humedad relativa del suelo" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Sin lectura disponible">
+            <div class="plant-earth-texture" aria-hidden="true"></div>
+            <div class="plant-earth-fill" id="plant-earth-fill" aria-hidden="true"><span class="earth-shimmer"></span><span class="earth-bubble bubble-one"></span><span class="earth-bubble bubble-two"></span><span class="earth-bubble bubble-three"></span></div>
+            <div class="plant-earth-roots" aria-hidden="true"><span>╱</span><span>╲</span><span>╱</span></div>
+          </div>
+          <div class="plant-meter-legend"><span><i class="plant-legend-dot dot-dry"></i>Seco</span><span><i class="plant-legend-dot dot-mid"></i>Medio</span><span><i class="plant-legend-dot dot-good"></i>Húmedo</span><span><i class="plant-legend-dot dot-wet"></i>Muy mojado</span></div>
+        </div>
+        <div class="plant-soil-footer"><div><span>Valor del sensor (ADC)</span><strong id="plant-adc">----</strong></div><div><span>Calibración</span><strong>2535 / 1350</strong></div></div>
+      </article>
+
+      <article class="plant-panel plant-air-panel">
+        <div class="plant-panel-head">
+          <div class="plant-title-line"><span class="plant-metric-icon air-icon">☀️</span><div><h3>El ambiente de mi planta</h3><p>DHT11 · GPIO 17</p></div></div>
+          <span class="plant-mini-tag air-tag">EN CASA</span>
+        </div>
+        <div class="plant-air-metrics">
+          <div class="plant-air-metric plant-temp-metric"><div class="plant-air-metric-top"><span>Temperatura</span><span aria-hidden="true">🌡️</span></div><div class="plant-air-number"><strong id="plant-temperature">--</strong><span>°C</span></div><p id="plant-temp-label">Sin lectura</p><div class="plant-air-mini-meter"><div id="plant-temp-bar"></div></div></div>
+          <div class="plant-air-metric plant-hum-metric"><div class="plant-air-metric-top"><span>Humedad ambiental</span><span aria-hidden="true">☁️</span></div><div class="plant-air-number"><strong id="plant-air-humidity">--</strong><span>%</span></div><p id="plant-hum-label">Sin lectura</p><div class="plant-air-mini-meter"><div id="plant-hum-bar"></div></div></div>
+        </div>
+        <div class="plant-tip"><span aria-hidden="true">✿</span><p id="plant-ambient-tip">Las lecturas ambientales vienen del sensor DHT11 existente; no hace falta activar otros controles.</p></div>
+      </article>
+    </section>
+
+    <section class="plant-bottom-grid" aria-label="Consejos y estado de sensores">
+      <article class="plant-note"><div class="plant-note-icon" id="plant-advice-icon" aria-hidden="true">🌿</div><div><h3 id="plant-advice-title">Un pequeño consejo</h3><p id="plant-advice-text">Vamos a observar el suelo antes de decidir si es momento de regar.</p></div></article>
+      <article class="plant-reading"><div><span class="plant-reading-dot" id="plant-reading-dot"></span><strong id="plant-reading-label">Esperando sensores</strong><p id="plant-last-updated">Todavía no hay una medición válida.</p></div><button class="plant-refresh-btn" id="plant-refresh" type="button" aria-label="Actualizar lectura ahora">↻ <span>Actualizar</span></button></article>
+    </section>
+    <p class="plant-disclaimer">Los porcentajes de la tierra son relativos a tu calibración (2535 = seco, 1350 = mojado). No representan el porcentaje físico de agua. Riega según las necesidades reales de tu planta y el drenaje de la maceta.</p>
+  </main>
+</template>
+<script src="notify.js"></script>
+<script src="app.js"></script>
+<script src="planta.js"></script>
+</body>
+</html>

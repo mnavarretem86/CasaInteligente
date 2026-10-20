@@ -14,6 +14,7 @@
   const menu = [
     ['dashboard', 'dashboard.html', '🏠', 'Resumen'],
     ['clima', 'clima.html', '🌡️', 'Temperatura y humedad'],
+    ['planta', 'planta.html', '🌱', 'Mi Planta'],
     ['seguridad', 'seguridad.html', '🛡️', 'Seguridad'],
     ['lluvia', 'lluvia.html', '🌧️', 'Sensor de lluvia'],
     ['pronostico', 'pronostico.html', '🌦️', 'Pronóstico local'],
@@ -246,7 +247,7 @@
       <aside class="sidebar" id="app-sidebar">
         <div class="sidebar-top">
           <a href="index.html" class="brand" aria-label="Volver al inicio">
-            <span class="brand-icon">⌂</span><span><span class="brand-name">Smart Home</span><br><span class="brand-sub">UAM · ROBÓTICA SI15A</span></span>
+            <span class="brand-icon">⌂</span><span><span class="brand-name">Smart Home</span><br><span class="brand-sub">UDEM · ROBÓTICA SI15A</span></span>
           </a>
           <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Cerrar menú">✕</button>
         </div>
@@ -265,7 +266,7 @@
           </div>
         </header>
         <div id="page-content"></div>
-        <footer class="page-footer">UAM · Robótica SI15A · Sistema Domótico IoT</footer>
+        <footer class="page-footer">UDEM · Robótica SI15A · Sistema Domótico IoT</footer>
       </div>`;
     const container = $('main-menu');
     for (const [id, href, emoji, title] of menu) {
@@ -286,7 +287,7 @@
     const activeLink = container.querySelector('.menu-link.active');
     if (activeLink) {
       requestAnimationFrame(() => {
-        if (global.innerWidth <= 820) {
+        if (global.innerWidth <= 1080) {
           container.scrollLeft = Math.max(0, activeLink.offsetLeft - container.offsetLeft -
             (container.clientWidth - activeLink.clientWidth) / 2);
         }
@@ -298,7 +299,7 @@
     const closeButton = $('sidebar-close');
 
     function closeMobileMenu() {
-      if (!sidebar || global.innerWidth > 820) return;
+      if (!sidebar || global.innerWidth > 1080) return;
       sidebar.classList.remove('open');
       document.body.classList.remove('menu-open');
       if (overlay) overlay.hidden = true;
@@ -306,7 +307,7 @@
     }
 
     function openMobileMenu() {
-      if (!sidebar || global.innerWidth > 820) return;
+      if (!sidebar || global.innerWidth > 1080) return;
       sidebar.classList.add('open');
       document.body.classList.add('menu-open');
       if (overlay) overlay.hidden = false;
@@ -320,7 +321,7 @@
     if (closeButton) closeButton.addEventListener('click', closeMobileMenu);
     if (overlay) overlay.addEventListener('click', closeMobileMenu);
     global.addEventListener('resize', () => {
-      if (global.innerWidth > 820) {
+      if (global.innerWidth > 1080) {
         sidebar?.classList.remove('open');
         document.body.classList.remove('menu-open');
         if (overlay) overlay.hidden = true;

@@ -1,6 +1,6 @@
 "use strict";
 
-const AudioUAM = (() => {
+const AudioUDEM = (() => {
   const SONGS = {
     jingle: "Navidad",
     starwars: "Star Wars",
@@ -117,6 +117,6 @@ const AudioUAM = (() => {
 SmartHome.bootPage({
   active: "audio",
   interval: 2200,
-  onData: AudioUAM.onData,
-  onError: AudioUAM.onError
+  onData: AudioUDEM.onData,
+  onError: AudioUDEM.onError
 });

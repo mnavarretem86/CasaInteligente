@@ -1,6 +1,5 @@
 'use strict';
 
-// GreenLife IoT: únicamente presenta lecturas existentes de /api/status.
 const GreenLife = (() => {
   const $ = id => document.getElementById(id);
   const write = (id, value) => { if ($(id)) $(id).textContent = String(value); };
